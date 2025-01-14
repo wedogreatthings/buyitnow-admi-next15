@@ -11,7 +11,9 @@ export const getAllOrders = async (searchParams) => {
   /***** In Development Mode, cookie name is "next-auth.session-token" *****/
   /***** In Production Mode, cookie name is "__Secure-next-auth.session-token" *****/
 
-  const nextAuthSessionToken = nextCookies.get('next-auth.session-token');
+  const nextAuthSessionToken = nextCookies.get(
+    '__Secure-next-auth.session-token',
+  );
 
   const urlParams = {
     keyword: (await searchParams).keyword,
@@ -26,7 +28,7 @@ export const getAllOrders = async (searchParams) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/overview?${searchQuery}`,
     {
       headers: {
-        Cookie: `next-auth.session-token=${nextAuthSessionToken?.value}`,
+        Cookie: `__Secure-next-auth.session-token=${nextAuthSessionToken?.value}`,
       },
     },
   );
@@ -58,7 +60,9 @@ export const getOrdersInfo = async (searchParams) => {
   /***** In Development Mode, cookie name is "next-auth.session-token" *****/
   /***** In Production Mode, cookie name is "__Secure-next-auth.session-token" *****/
 
-  const nextAuthSessionToken = nextCookies.get('next-auth.session-token');
+  const nextAuthSessionToken = nextCookies.get(
+    '__Secure-next-auth.session-token',
+  );
 
   const urlParams = {
     keyword: (await searchParams).keyword,
@@ -73,7 +77,7 @@ export const getOrdersInfo = async (searchParams) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/orders?${searchQuery}`,
     {
       headers: {
-        Cookie: `next-auth.session-token=${nextAuthSessionToken?.value}`,
+        Cookie: `__Secure-next-auth.session-token=${nextAuthSessionToken?.value}`,
       },
     },
   );
@@ -102,13 +106,15 @@ export const getOrdersPurchasedData = async () => {
 export const getSingleOrder = async (id) => {
   const nextCookies = await cookies();
 
-  const nextAuthSessionToken = nextCookies.get('next-auth.session-token');
+  const nextAuthSessionToken = nextCookies.get(
+    '__Secure-next-auth.session-token',
+  );
 
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${id}`,
     {
       headers: {
-        Cookie: `next-auth.session-token=${nextAuthSessionToken?.value}`,
+        Cookie: `__Secure-next-auth.session-token=${nextAuthSessionToken?.value}`,
       },
     },
   );
@@ -181,7 +187,7 @@ export const getSingleProduct = async (id) => {
     `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
     {
       headers: {
-        Cookie: `next-auth.session-token=${nextAuthSessionToken?.value}`,
+        Cookie: `__Secure-next-auth.session-token=${nextAuthSessionToken?.value}`,
       },
     },
   );
