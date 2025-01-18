@@ -12,7 +12,7 @@ module.exports = {
     'next/core-web-vitals',
     'plugin:jest/recommended',
     'plugin:jest-dom/recommended',
-    'plugin:jsx-a11y/recommended',
+    'plugin:testing-library/react'
   ],
   overrides: [],
   parserOptions: {
@@ -21,6 +21,6 @@ module.exports = {
   },
   plugins: ['react', 'jest', 'jest-dom'],
   rules: {
-    'react/react-in-jsx-scope': "off",
+    'react/react-in-jsx-scope': 'off',
   },
 };
