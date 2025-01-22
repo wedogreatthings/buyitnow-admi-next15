@@ -106,7 +106,8 @@ const Overview = ({ orders }) => {
         />
       )}
 
-      {console.log(orders?.totalPages)}
+      {console.log("Orders")}
+      {console.log(orders)}
 
       <div className="mb-6">
         <CustomPagination totalPages={orders?.totalPages} />

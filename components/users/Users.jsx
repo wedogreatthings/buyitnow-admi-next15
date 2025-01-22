@@ -78,11 +78,14 @@ const Users = memo(({ data }) => {
         <UsersTable users={data?.users} deleteHandler={deleteHandler} />
       )}
 
-      {data?.totalPages > 1 && (
+      {/* {data?.totalPages > 1 && (
         <div className="mb-6">
           <CustomPagination totalPages={data?.totalPages} />
         </div>
-      )}
+      )} */}
+      <div className="mb-6">
+        <CustomPagination totalPages={data?.totalPages} />
+      </div>
     </div>
   );
 });
