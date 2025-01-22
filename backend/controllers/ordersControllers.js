@@ -124,7 +124,7 @@ export const getOrders = async (req, res) => {
       totalOrdersPaidThisMonth,
       totalOrdersThisMonth,
       ordersCount,
-      resPerPage,
+      totalPages,
       filteredOrdersCount,
       orders,
     });
