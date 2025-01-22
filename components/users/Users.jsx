@@ -78,12 +78,9 @@ const Users = memo(({ data }) => {
         <UsersTable users={data?.users} deleteHandler={deleteHandler} />
       )}
 
-      {data?.filteredUsers > data?.resPerPage && (
+      {data?.totalPages > 1 && (
         <div className="mb-6">
-          <CustomPagination
-            resPerPage={data?.resPerPage}
-            listCount={data?.filteredUsers}
-          />
+          <CustomPagination totalPages={data?.totalPages} />
         </div>
       )}
     </div>

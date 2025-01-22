@@ -43,6 +43,9 @@ export const getOrders = async (req, res) => {
       .sort({ createdAt: -1 });
   }
 
+  const result = ordersCount / resPerPage;
+  const totalPages = Number.isInteger(result) ? result : Math.ceil(result);
+
   /////////************ ************/////////
 
   ////////*** STATS AND PIPELINES ***////////
@@ -131,8 +134,8 @@ export const getOrders = async (req, res) => {
       totalOrdersDeliveredThisMonth,
       deliveredOrdersCount,
       totalOrdersThisMonth,
+      totalPages,
       ordersCount,
-      resPerPage,
       filteredOrdersCount,
       orders,
     });

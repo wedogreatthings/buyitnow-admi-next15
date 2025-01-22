@@ -88,10 +88,7 @@ const Orders = memo(({ orders }) => {
       )}
 
       <div className="mb-6">
-        <CustomPagination
-          resPerPage={orders?.resPerPage}
-          listCount={orders?.filteredOrdersCount}
-        />
+        <CustomPagination totalPages={orders?.totalPages} />
       </div>
     </div>
   );

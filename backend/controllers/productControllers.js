@@ -44,12 +44,15 @@ export const getProducts = async (req, res, next) => {
 
   products = await apiFilters.query.clone();
 
+  const result = filteredProductsCount / resPerPage;
+  const totalPages = Number.isInteger(result) ? result : Math.ceil(result);
+
   const categories = await Category.find();
 
   res.status(200).json({
     categories,
+    totalPages,
     productsCount,
-    resPerPage,
     filteredProductsCount,
     products,
   });

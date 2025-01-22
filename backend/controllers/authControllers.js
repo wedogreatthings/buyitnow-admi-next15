@@ -23,6 +23,9 @@ export const getUsers = async (req, res) => {
   apiFilters.pagination(resPerPage);
   users = await apiFilters.query.clone().sort({ createdAt: -1 });
 
+  const result = filteredUsers / resPerPage;
+  const totalPages = Number.isInteger(result) ? result : Math.ceil(result);
+
   /////////************ ************/////////
 
   ////////*** STATS AND PIPELINES ***////////
@@ -53,8 +56,8 @@ export const getUsers = async (req, res) => {
     usersRegisteredLastMonth,
     usersRegisteredThisMonth,
     clientUsersCount,
+    totalPages,
     usersCount,
-    resPerPage,
     filteredUsers,
     users,
   });

@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react'
+import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Pagination from 'react-js-pagination';
+import ResponsivePaginationComponent from 'react-responsive-pagination';
+import 'react-responsive-pagination/themes/classic.css';
 
-const CustomPagination = ({ resPerPage, listCount }) => {
+const CustomPagination = ({ totalPages }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -31,7 +32,7 @@ const CustomPagination = ({ resPerPage, listCount }) => {
 
   return (
     <div className="flex mt-20 justify-center">
-      <Pagination
+      {/* <Pagination
         activePage={page}
         itemsCountPerPage={resPerPage}
         totalItemsCount={listCount}
@@ -43,6 +44,11 @@ const CustomPagination = ({ resPerPage, listCount }) => {
         itemClass="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
         activeLinkClassName="z-10 inline-flex items-center border border-indigo-500 bg-indigo-50 text-sm font-medium text-indigo-600 focus:z-20"
         activeClass="z-10 inline-flex items-center border border-indigo-500 bg-indigo-50 text-sm font-medium text-indigo-600 focus:z-20"
+      /> */}
+      <ResponsivePaginationComponent
+        current={page}
+        total={totalPages}
+        onPageChange={handlePageChange}
       />
     </div>
   );
