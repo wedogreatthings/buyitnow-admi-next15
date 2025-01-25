@@ -31,7 +31,7 @@ const UserPurchasingsStats = ({
     {
       title: 'Best This Month',
       content: `${usersThatBoughtMostThisMonth === null || usersThatBoughtMostThisMonth?.result[0] === undefined ? 'No one' : `${usersThatBoughtMostThisMonth?.result[0]?.name}`}`,
-      indication: `${currentMonth}/${currentYear}: ${usersThatBoughtMostThisMonth === null || usersThatBoughtMostThisMonth?.result[0] === undefined ? 'Nothing' : usersThatBoughtMostThisMonth?.totalPurchases.toFixed(2)}`,
+      indication: `${currentMonth}/${currentYear}: $ ${usersThatBoughtMostThisMonth === null || usersThatBoughtMostThisMonth?.result[0] === undefined ? 'Nothing' : usersThatBoughtMostThisMonth?.totalPurchases.toFixed(2)}`,
     },
   ];
 

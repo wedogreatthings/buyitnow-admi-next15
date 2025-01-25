@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React from 'react';
 import { arrayHasData } from '@/helpers/helpers';
 import OverviewStatCard from './OverviewStatCard';
 
@@ -15,7 +15,7 @@ const OverviewAllStats = ({
   bestProductSoldThisMonth,
   userThatBoughtMostSinceBeginning,
 }) => {
-  const currentMonth = new Date().getMonth();
+  const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
 
   const dataOrders = [
