@@ -12,7 +12,9 @@ const fileFilter = (req, file, cb) => {
     file.mimetype === 'image/png' ||
     file.mimetype === 'image/jpg'
   ) {
+    file;
     cb(null, true);
+    console.log(file);
   } else {
     ({ error: 'Unsupported file format. Upload only JPEG/JPG or PNG' }), false;
   }

@@ -94,6 +94,7 @@ export const uploadProductImages = async (req, res, next) => {
 
   const urls = [];
   const files = req.files;
+  console.log(req.files);
 
   for (const file of files) {
     const { path } = file;
