@@ -50,7 +50,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
         <h1 className="text-xl ml-4 font-bold underline">Delivery Price</h1>
         <Link
           href="/admin/settings/delivery-price/add"
-          className="px-2 inline-block text-blue-500 bg-white shadow-sm border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
+          className="px-2 inline-block text-blue-500 bg-white shadow-xs border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
         >
           <i className="fa fa-plus" aria-hidden="true"></i>
         </Link>
@@ -67,7 +67,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
           dataDeliveryPrice?.deliveryPrice.map((price) => (
             <div
               key={price?._id}
-              className="relative w-30 p-8 rounded ml-6 justify-center items-center bg-orange-950"
+              className="relative w-30 p-8 rounded-sm ml-6 justify-center items-center bg-orange-950"
             >
               <div
                 className="absolute top-0 right-1.5 cursor-pointer"
@@ -89,7 +89,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
         <h1 className="text-xl ml-4 font-bold underline">Product Categories</h1>
         <Link
           href="/admin/settings/categories/add"
-          className="px-2 inline-block text-blue-500 bg-white shadow-sm border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
+          className="px-2 inline-block text-blue-500 bg-white shadow-xs border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
         >
           <i className="fa fa-plus" aria-hidden="true"></i>
         </Link>
@@ -104,7 +104,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
           dataCategory?.categories.map((category, index) => (
             <div
               key={category?._id}
-              className={`relative w-30 p-8 rounded ml-6 justify-center items-center ${colors[index]}`}
+              className={`relative w-30 p-8 rounded-sm ml-6 justify-center items-center ${colors[index]}`}
             >
               <div
                 className="absolute top-0 right-1.5 cursor-pointer"
@@ -126,7 +126,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
         <h1 className="text-xl ml-4 font-bold underline">Payment Types</h1>
         <Link
           href="/admin/settings/paymentType/add"
-          className="px-2 inline-block text-blue-500 bg-white shadow-sm border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
+          className="px-2 inline-block text-blue-500 bg-white shadow-xs border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
         >
           <i className="fa fa-plus" aria-hidden="true"></i>
         </Link>
@@ -143,7 +143,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
           dataPayment?.paymentTypes.map((payment) => (
             <div
               key={payment?._id}
-              className="relative w-30 p-8 rounded ml-6 justify-center items-center bg-emerald-900 shadow-md"
+              className="relative w-30 p-8 rounded-sm ml-6 justify-center items-center bg-emerald-900 shadow-md"
             >
               <div
                 className="absolute top-0 right-1.5 cursor-pointer"

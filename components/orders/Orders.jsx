@@ -50,13 +50,13 @@ const Orders = memo(({ orders }) => {
         <div className="flex justify-center items-baseline mr-4">
           <button
             onClick={() => setOpenStats((prev) => !prev)}
-            className="px-2 inline-block text-blue-500 bg-white shadow-sm border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer mr-4"
+            className="px-2 inline-block text-blue-500 bg-white shadow-xs border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer mr-4"
           >
             <i className="fa fa-chart-simple" aria-hidden="true"></i>
           </button>
           <button
             onClick={() => setOpen((prev) => !prev)}
-            className="px-2 inline-block text-blue-500 bg-white shadow-sm border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer mr-4"
+            className="px-2 inline-block text-blue-500 bg-white shadow-xs border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer mr-4"
           >
             <i className="fa fa-sliders" aria-hidden="true"></i>
           </button>

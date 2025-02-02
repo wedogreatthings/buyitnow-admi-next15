@@ -43,7 +43,7 @@ const InfoPage = ({ product }) => {
                 title={product?.name}
                 width="100"
                 height="150"
-                placeholder="blur"
+                placeholder="blur-sm"
                 blurDataURL="/images/default_product.png"
                 style={{ objectFit: 'fill' }}
               />

@@ -2,7 +2,7 @@ import React from 'react'
 
 const UserStatCard = ({ title, content, indication, color }) => {
     return (
-      <div className="h-59 p-2 w-1/5 ml-2 border border-gray-400 bg-blue-200 rounded flex flex-col justify-evenly">
+      <div className="h-59 p-2 w-1/5 ml-2 border border-gray-400 bg-blue-200 rounded-sm flex flex-col justify-evenly">
         <div className="bg-white rounded-xl pl-1 pr-6 w-fit">
           <p
             className={`${color !== undefined ? 'text-red-600' : 'text-green-600'} text-xs`}

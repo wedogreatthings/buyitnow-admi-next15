@@ -40,7 +40,7 @@ const AddCategory = () => {
         <div className="mb-4 w-1/2">
           <label className="block mb-1"> Category Name </label>
           <input
-            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
             type="text"
             placeholder="Type category name"
             minLength={3}

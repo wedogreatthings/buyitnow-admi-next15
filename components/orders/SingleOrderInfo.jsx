@@ -96,7 +96,7 @@ const SingleOrderInfo = ({ order, deliveryPrice }) => {
           {order?.orderItems?.map((item) => (
             <figure className="flex flex-row mb-4" key={item?._id}>
               <div>
-                <div className="block w-20 h-20 rounded border border-gray-200 overflow-hidden p-3">
+                <div className="block w-20 h-20 rounded-sm border border-gray-200 overflow-hidden p-3">
                   <img
                     src={item?.image}
                     height="60"

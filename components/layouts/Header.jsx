@@ -20,9 +20,9 @@ const Header = memo(() => {
 
   return (
     <header className="bg-white py-2 border-b">
-      <div className="container max-w-screen-xl mx-auto px-4">
+      <div className="container max-w-(--breakpoint-xl) mx-auto px-4">
         <div className="flex flex-wrap items-center">
-          <div className="flex-shrink-0 mr-5">
+          <div className="shrink-0 mr-5">
             <Image
               priority
               src="/images/logo.png"

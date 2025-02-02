@@ -39,7 +39,7 @@ const AddPaymentType = () => {
         <div className="mb-4 w-1/2">
           <label className="block mb-1"> Platform Name </label>
           <input
-            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
             type="text"
             placeholder="Type platform name"
             minLength={3}
@@ -52,7 +52,7 @@ const AddPaymentType = () => {
         <div className="mb-4 w-1/2">
           <label className="block mb-1"> Platform Number </label>
           <input
-            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
             type="tel"
             placeholder="Type platform number"
             minLength={6}

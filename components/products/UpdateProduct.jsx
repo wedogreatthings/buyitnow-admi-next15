@@ -58,7 +58,7 @@ const UpdateProduct = memo(({ data }) => {
             <label className="block mb-1"> Name </label>
             <input
               type="text"
-              className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+              className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
               placeholder="Product name"
               name="name"
               value={name}
@@ -72,7 +72,7 @@ const UpdateProduct = memo(({ data }) => {
           <label className="block mb-1"> Description </label>
           <textarea
             rows="4"
-            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
             placeholder="Product description"
             name="description"
             value={description}
@@ -88,7 +88,7 @@ const UpdateProduct = memo(({ data }) => {
               <div className="col-span-2">
                 <input
                   type="text"
-                  className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+                  className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
                   placeholder="0.00"
                   name="price"
                   value={price}
@@ -103,7 +103,7 @@ const UpdateProduct = memo(({ data }) => {
               <label className="block mb-1"> Category </label>
               <div className="relative">
                 <select
-                  className="block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+                  className="block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
                   name="category"
                   value={category}
                   onChange={onChange}
@@ -137,7 +137,7 @@ const UpdateProduct = memo(({ data }) => {
               <div className="col-span-2">
                 <input
                   type="text"
-                  className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+                  className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
                   placeholder="0"
                   name="stock"
                   value={stock}

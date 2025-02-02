@@ -37,7 +37,7 @@ const Search = ({ setLoading }) => {
       onSubmit={submitHandler}
     >
       <input
-        className="appearance-none border border-gray-200 bg-gray-100 rounded-md mr-2 py-1 px-1 hover:border-gray-400 focus:outline-none focus:border-gray-400"
+        className="appearance-none border border-gray-200 bg-gray-100 rounded-md mr-2 py-1 px-1 hover:border-gray-400 focus:outline-hidden focus:border-gray-400"
         type="text"
         placeholder="Enter your keyword"
         value={keyword}

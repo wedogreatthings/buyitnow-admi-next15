@@ -46,7 +46,7 @@ const OrderPurchased = ({ data }) => {
         <button
           title="Statistiques"
           onClick={() => setOpen((prev) => !prev)}
-          className="px-2 inline-block text-blue-500 bg-white shadow-sm border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
+          className="px-2 inline-block text-blue-500 bg-white shadow-xs border border-blue-600 rounded-md hover:bg-gray-100 cursor-pointer my-1 mr-4"
         >
           <i className="fa fa-chart-simple" aria-hidden="true"></i>
         </button>
