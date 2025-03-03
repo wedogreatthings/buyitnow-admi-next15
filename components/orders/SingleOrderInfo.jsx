@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import Image from 'next/image';
 import React from 'react';
 
 const SingleOrderInfo = ({ order, deliveryPrice }) => {
@@ -98,10 +99,10 @@ const SingleOrderInfo = ({ order, deliveryPrice }) => {
           <figure className="flex flex-row mb-4" key={item?._id}>
             <div>
               <div className="block w-20 h-20 rounded-sm border border-gray-200 overflow-hidden p-3">
-                <img
+                <Image
                   src={item?.image}
-                  height="60"
-                  width="60"
+                  height={60}
+                  width={60}
                   alt={item?.name}
                 />
               </div>

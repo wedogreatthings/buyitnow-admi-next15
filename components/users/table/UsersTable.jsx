@@ -2,6 +2,7 @@
 import React from 'react';
 import { arrayHasData } from '@/helpers/helpers';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const UsersTable = ({ users, deleteHandler }) => {
   return arrayHasData(users) ? (
@@ -33,10 +34,12 @@ const UsersTable = ({ users, deleteHandler }) => {
         {users?.map((user) => (
           <tr key={user?._id} className="bg-white">
             <td className="flex items-end px-6 py-2">
-              <img
+              <Image
                 className="w-7 h-7 rounded-full mr-4"
                 src={user?.avatar ? user?.avatar?.url : '/images/default.png'}
                 alt={user?.name}
+                width={7}
+                height={7}
               />
               <span>{user?.name}</span>
             </td>

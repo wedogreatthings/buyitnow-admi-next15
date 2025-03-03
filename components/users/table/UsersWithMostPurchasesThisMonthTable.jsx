@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { arrayHasData } from '@/helpers/helpers';
+import Image from 'next/image';
 
 const UsersWithMostPurchasesThisMonthTable = ({
   usersThatBoughtMostThisMonth,
@@ -33,7 +34,7 @@ const UsersWithMostPurchasesThisMonthTable = ({
         {usersThatBoughtMostThisMonth?.map((user) => (
           <tr key={user?._id} className="bg-white">
             <td className="flex items-end px-6 py-2">
-              <img
+              <Image
                 className="w-7 h-7 rounded-full mr-4"
                 src={
                   user?.result[0]?.avatar
@@ -41,6 +42,8 @@ const UsersWithMostPurchasesThisMonthTable = ({
                     : '/images/default.png'
                 }
                 alt={user?.result[0]?.name}
+                width={7}
+                height={7}
               />
               <span>{user?.result[0]?.name}</span>
             </td>

@@ -37,9 +37,12 @@ const Header = memo(() => {
           <div className="flex items-center space-x-2 ml-auto">
             {pathName !== '/' && user && (
               <div className="flex items-center mb-4 space-x-3 mt-4">
-                <img
+                <Image
                   className="w-10 h-10 rounded-full"
                   src={user?.avatar ? user?.avatar?.url : '/images/default.png'}
+                  width={10}
+                  height={10}
+                  alt="header profile image"
                 />
                 <div className="space-y-1 font-medium">
                   <p>

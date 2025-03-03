@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import React, { memo, useContext, useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ const OrdersTable = dynamic(() => import('./table/OrdersTable'), {
 
 import Search from '../layouts/Search';
 import OrdersFilter from './OrdersFilter';
+import { toast } from 'react-toastify';
 
 const OrderInfoStats = dynamic(() => import('./card/OrderInfoStats'), {
   loading: () => <Loading />,
@@ -31,6 +33,7 @@ const Orders = memo(({ orders }) => {
     if (loading) {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders]);
 
   useEffect(() => {
@@ -38,6 +41,7 @@ const Orders = memo(({ orders }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const deleteHandler = (id) => {
