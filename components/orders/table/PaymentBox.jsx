@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import OrderContext from '@/context/OrderContext';
@@ -23,6 +24,7 @@ const PaymentBox = ({ order }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
   const handleChange = () => {

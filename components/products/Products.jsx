@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import dynamic from 'next/dynamic';
@@ -26,6 +27,7 @@ const Products = memo(({ data }) => {
     if (loading) {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ const Products = memo(({ data }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const deleteHandler = (id) => {

@@ -8,6 +8,7 @@ const UserProfile = dynamic(() => import('@/components/users/UserProfile'), {
 
 import { getSingleUser } from '@/backend/utils/server-only-methods';
 
+// eslint-disable-next-line react/prop-types
 const UserProfilePage = async ({ params }) => {
   const data = await getSingleUser((await params)?.id);
 

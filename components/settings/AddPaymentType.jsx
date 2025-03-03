@@ -15,6 +15,7 @@ const AddPaymentType = () => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const submitHandler = (e) => {

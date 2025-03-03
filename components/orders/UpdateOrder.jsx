@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import dynamic from 'next/dynamic';
@@ -29,6 +30,7 @@ const UpdateOrder = memo(({ order }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
   const submitHandler = () => {

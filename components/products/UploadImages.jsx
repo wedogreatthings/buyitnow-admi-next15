@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import React, { useContext, useState, useEffect, memo } from 'react';
@@ -37,6 +38,7 @@ const UploadImages = memo(({ id }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const submitHandler = (e) => {

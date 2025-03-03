@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { arrayHasData } from '@/helpers/helpers';
 import React from 'react';
 

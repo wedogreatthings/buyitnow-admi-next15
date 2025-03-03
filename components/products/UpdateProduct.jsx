@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import React, { memo, useContext, useEffect, useState } from 'react';
@@ -32,6 +33,7 @@ const UpdateProduct = memo(({ data }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
   const { name, description, price, stock, category } = product;

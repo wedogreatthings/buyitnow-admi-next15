@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { searchSchema } from '@/helpers/schemas';
 
+// eslint-disable-next-line react/prop-types
 const Search = ({ setLoading }) => {
   const [keyword, setKeyword] = useState('');
 

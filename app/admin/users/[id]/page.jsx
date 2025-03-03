@@ -8,6 +8,7 @@ const UpdateUser = dynamic(() => import('@/components/users/UpdateUser'), {
 
 import { getSingleUser } from '@/backend/utils/server-only-methods';
 
+// eslint-disable-next-line react/prop-types
 const AdminUserDetailsPage = async ({ params }) => {
   const data = await getSingleUser((await params)?.id);
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import InfoPage from './InfoPage';
 import OrdersPage from './OrdersPage';

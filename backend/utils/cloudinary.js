@@ -26,4 +26,4 @@ const uploads = (file, folder) => {
   });
 };
 
-export { uploads };
+export { uploads, cloudinary };

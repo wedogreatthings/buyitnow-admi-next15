@@ -12,8 +12,9 @@ export const metadata = {
   title: 'Dashboard - Products Info',
 };
 
+// eslint-disable-next-line react/prop-types
 const ProductsPage = async ({ searchParams }) => {
-  const products = await getAllProducts(searchParams);
+  const products = await getAllProducts(await searchParams);
 
   return <Products data={products} />;
 };

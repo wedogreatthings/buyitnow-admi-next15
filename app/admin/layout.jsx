@@ -1,8 +1,9 @@
-import React from 'react'
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
-const Sidebar = dynamic(() => import("@/components/layouts/Sidebar"));
+import React from 'react';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+const Sidebar = dynamic(() => import('@/components/layouts/Sidebar'));
 
+// eslint-disable-next-line react/prop-types
 const AdminLayout = ({ children }) => {
   return (
     <>

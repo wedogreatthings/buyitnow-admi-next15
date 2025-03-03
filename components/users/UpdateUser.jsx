@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import React, { memo, useContext, useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ const UpdateUser = memo(({ user }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
   const submitHandler = (e) => {

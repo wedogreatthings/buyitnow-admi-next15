@@ -10,6 +10,7 @@ const UpdateProduct = dynamic(
   },
 );
 
+// eslint-disable-next-line react/prop-types
 const HomePage = async ({ params }) => {
   const singleProduct = await getSingleProduct((await params)?.id);
 

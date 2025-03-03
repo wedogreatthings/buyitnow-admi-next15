@@ -1,4 +1,5 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+import React from 'react';
 import { arrayHasData } from '@/helpers/helpers';
 import OrderItem from './OrderItem';
 

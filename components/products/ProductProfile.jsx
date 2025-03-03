@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 'use client';
 
 import React, { memo, useState } from 'react';

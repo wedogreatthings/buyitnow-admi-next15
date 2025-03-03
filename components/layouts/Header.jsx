@@ -16,6 +16,7 @@ const Header = memo(() => {
     if (data) {
       setUser(data?.user);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import React from 'react';
@@ -15,6 +16,7 @@ const UsersTable = dynamic(() => import('./table/UsersTable'), {
 });
 
 import Search from '../layouts/Search';
+import { toast } from 'react-toastify';
 
 const UserRegistrationStats = dynamic(
   () => import('./card/UserRegistrationStats'),
@@ -32,6 +34,7 @@ const Users = memo(({ data }) => {
     if (loading) {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -39,6 +42,7 @@ const Users = memo(({ data }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const deleteHandler = (id) => {

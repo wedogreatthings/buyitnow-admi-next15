@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import dynamic from 'next/dynamic';
 import React, { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import OrdersFilter from '../orders/OrdersFilter';
 import OrderContext from '@/context/OrderContext';
 import Loading from '@/app/loading';
@@ -34,6 +36,7 @@ const Overview = ({ orders }) => {
       setLoading(false);
       setDeliveryPrice(orders?.deliveryPrice[0]?.deliveryPrice);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders]);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ const Overview = ({ orders }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const deleteHandler = (id) => {

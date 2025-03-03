@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 'use client';
 
 import SettingsContext from '@/context/SettingsContext';
@@ -22,6 +23,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const colors = [

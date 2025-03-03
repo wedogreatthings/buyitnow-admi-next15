@@ -9,6 +9,7 @@ export const metadata = {
   title: 'Dashboard - Add Picture',
 };
 
+// eslint-disable-next-line react/prop-types
 const HomePage = async ({ params }) => {
   return <UploadImages id={(await params)?.id} />;
 };

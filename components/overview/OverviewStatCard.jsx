@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 
 const OverviewStatCard = ({ title, content, indication, color }) => {

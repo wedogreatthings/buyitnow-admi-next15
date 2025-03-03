@@ -7,6 +7,7 @@ const UpdateOrder = dynamic(() => import('@/components/orders/UpdateOrder'), {
   loading: () => <Loading />,
 });
 
+// eslint-disable-next-line react/prop-types
 const OrderDetailsPage = async ({ params }) => {
   const data = await getSingleOrder((await params)?.id);
 

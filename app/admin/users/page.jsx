@@ -12,8 +12,9 @@ export const metadata = {
   title: 'Dashboard - Users Info',
 };
 
+// eslint-disable-next-line react/prop-types
 const AdminUsersPage = async ({ searchParams }) => {
-  const users = await getAllUsers(searchParams);
+  const users = await getAllUsers(await searchParams);
 
   return <Users data={users} />;
 };

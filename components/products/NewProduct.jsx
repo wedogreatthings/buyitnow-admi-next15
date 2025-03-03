@@ -25,6 +25,7 @@ const NewProduct = () => {
       toast.error(error);
       clearErrors();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const { name, description, price, stock, category } = product;

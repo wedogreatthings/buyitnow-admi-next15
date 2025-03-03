@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 'use client';
 
-import React from 'react'
+import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const OrdersFilter = ({ open, setLoading }) => {
