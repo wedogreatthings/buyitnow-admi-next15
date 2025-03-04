@@ -185,22 +185,16 @@ export const getSingleProduct = async (id) => {
     '__Secure-next-auth.session-token',
   );
 
-  await axios
-    .get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, {
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
+    {
       headers: {
         Cookie: `__Secure-next-auth.session-token=${nextAuthSessionToken?.value}`,
       },
-    })
-    .then((result) => {
-      console.log('Result in getting a single product');
-      console.log(result);
-    })
-    .catch((error) => {
-      console.log('Error in getting a single product');
-      console.log(error);
-    });
+    },
+  );
 
-  return [];
+  return data;
 };
 
 export const getDeliveryPrice = async () => {

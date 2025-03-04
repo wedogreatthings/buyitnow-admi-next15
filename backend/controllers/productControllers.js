@@ -60,7 +60,6 @@ export const getProducts = async (req, res) => {
 };
 
 export const getProduct = async (req, res, next) => {
-  console.log('We are getting a single product');
   const product = await Product.findById(req.query.id).populate('category');
 
   if (!product) {
