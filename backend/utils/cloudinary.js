@@ -12,11 +12,9 @@ const uploads = (file, folder) => {
     cloudinary.uploader.upload(
       file,
       (result) => {
-        console.log('result after image uploading');
-        console.log(result);
         resolve({
           public_id: result.public_id,
-          url: result.url,
+          url: result.secure_url,
         });
       },
 

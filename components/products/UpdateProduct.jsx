@@ -7,6 +7,8 @@ import ProductContext from '@/context/ProductContext';
 import SettingsContext from '@/context/SettingsContext';
 
 const UpdateProduct = memo(({ data }) => {
+  console.log(data);
+  console.log(data);
   const { updateProduct, error, updated, setUpdated, clearErrors } =
     useContext(ProductContext);
   const { categories } = useContext(SettingsContext);
