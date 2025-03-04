@@ -13,6 +13,7 @@ import {
   revenuesGeneratedPerProduct,
 } from '../pipelines/productPipelines';
 import Category from '../models/category';
+import Cart from '../models/cart';
 
 export const newProduct = async (req, res, next) => {
   const user = await User.findOne({ email: req.user.email }).select('_id');
@@ -29,7 +30,7 @@ export const newProduct = async (req, res, next) => {
   });
 };
 
-export const getProducts = async (req, res, next) => {
+export const getProducts = async (req, res) => {
   const resPerPage = 2;
   const productsCount = await Product.countDocuments();
 
@@ -145,9 +146,7 @@ export const deleteProduct = async (req, res, next) => {
   } else {
     // Deleting images associated with the product
     for (let i = 0; i < product.images.length; i++) {
-      const res = await cloudinary.v2.uploader.destroy(
-        product.images[i].public_id,
-      );
+      await cloudinary.v2.uploader.destroy(product.images[i].public_id);
     }
 
     await product.deleteOne();

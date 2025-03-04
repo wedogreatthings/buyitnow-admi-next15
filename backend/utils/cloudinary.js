@@ -8,10 +8,12 @@ cloudinary.config({
 });
 
 const uploads = (file, folder) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     cloudinary.uploader.upload(
       file,
       (result) => {
+        console.log('result after image uploading');
+        console.log(result);
         resolve({
           public_id: result.public_id,
           url: result.url,
