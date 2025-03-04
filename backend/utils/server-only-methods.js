@@ -181,7 +181,9 @@ export const getProductSalesData = async () => {
 export const getSingleProduct = async (id) => {
   const nextCookies = await cookies();
 
-  const nextAuthSessionToken = nextCookies.get('next-auth.session-token');
+  const nextAuthSessionToken = nextCookies.get(
+    '__Secure-next-auth.session-token',
+  );
 
   await axios
     .get(`${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`, {
