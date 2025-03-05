@@ -41,6 +41,7 @@ const ProductsTable = ({ products, itemCount, deleteHandler }) => {
           <tbody>
             {products?.map((product) => (
               <tr className="bg-white" key={product._id}>
+                {console.log(product?.images)}
                 <td className="flex items-end px-6 py-2">
                   <Image
                     className="w-7 h-7 rounded-full mr-4"
