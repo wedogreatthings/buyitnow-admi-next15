@@ -93,6 +93,8 @@ export const ProductProvider = ({ children }) => {
       setLoading(false);
       return data;
     } catch (error) {
+      console.log('Error in removing image method from productContext');
+      console.log(error);
       setError(error?.response?.data?.message);
       setLoading(false);
       throw error;

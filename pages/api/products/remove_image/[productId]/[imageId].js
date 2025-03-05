@@ -17,11 +17,9 @@ export const config = {
   },
 };
 
-router.delete(
-  '/remove_image/:productId/:imageId',
-  isAuthenticatedUser,
-  authorizeRoles('admin'),
-  removeProductImage,
-);
+router
+  .use(isAuthenticatedUser)
+  .use(authorizeRoles('admin'))
+  .delete(removeProductImage);
 
 export default router.handler({ onError });
