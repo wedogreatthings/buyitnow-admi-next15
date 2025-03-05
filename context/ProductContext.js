@@ -72,6 +72,33 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  const removeProductImage = async (productId, imageId) => {
+    try {
+      setLoading(true);
+
+      const { data } = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products/remove_image/${productId}/${imageId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      // Update local state by filtering out the removed image
+      setProductImages((prevImages) =>
+        prevImages.filter((img) => img._id !== imageId),
+      );
+
+      setLoading(false);
+      return data;
+    } catch (error) {
+      setError(error?.response?.data?.message);
+      setLoading(false);
+      throw error;
+    }
+  };
+
   const deleteProduct = async (id) => {
     try {
       const { data } = await axios.delete(
@@ -103,6 +130,7 @@ export const ProductProvider = ({ children }) => {
         setProductImages,
         newProduct,
         uploadProductImages,
+        removeProductImage,
         updateProduct,
         deleteProduct,
         clearErrors,

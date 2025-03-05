@@ -113,6 +113,47 @@ export const uploadProductImages = async (req, res, next) => {
   });
 };
 
+// In your product controllers
+export const removeProductImage = async (req, res, next) => {
+  try {
+    const { productId, imageId } = req.query;
+
+    // Find the product
+    let product = await Product.findById(productId);
+
+    if (!product) {
+      return next(new ErrorHandler('Product not found.', 404));
+    }
+
+    // Find the image to remove
+    const imageToRemove = product.images.find(
+      (img) => img._id.toString() === imageId,
+    );
+
+    if (!imageToRemove) {
+      return next(new ErrorHandler('Image not found.', 404));
+    }
+
+    // Remove from Cloudinary
+    await cloudinary.uploader.destroy(imageToRemove.public_id);
+
+    // Remove from product images
+    product.images = product.images.filter(
+      (img) => img._id.toString() !== imageId,
+    );
+
+    // Save the updated product
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      data: product.images,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateProduct = async (req, res, next) => {
   let product = await Product.findById(req.query.id);
 
