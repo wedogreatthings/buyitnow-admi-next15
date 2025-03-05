@@ -1,10 +1,15 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+'use client';
+
+import React, { useContext } from 'react';
 import { arrayHasData } from '@/helpers/helpers';
 import Image from 'next/image';
 import Link from 'next/link';
+import ProductContext from '@/context/ProductContext';
 
 const ProductsTable = ({ products, itemCount, deleteHandler }) => {
+  const { setProductImages } = useContext(ProductContext);
+
   return (
     <div>
       <h3 className="text-xl my-2 ml-4 font-bold">{itemCount} Product(s)</h3>
@@ -36,6 +41,8 @@ const ProductsTable = ({ products, itemCount, deleteHandler }) => {
           <tbody>
             {products?.map((product) => (
               <tr className="bg-white" key={product._id}>
+                {console.log('product images in the table')}
+                {console.log(product?.images)}
                 <td className="flex items-end px-6 py-2">
                   <Image
                     className="w-7 h-7 rounded-full mr-4"
@@ -69,6 +76,7 @@ const ProductsTable = ({ products, itemCount, deleteHandler }) => {
 
                     <Link
                       href={`/admin/products/${product?._id}/upload_images`}
+                      onClick={() => setProductImages(product?.images)}
                       className="px-2 py-2 inline-block text-green-600 bg-white shadow-xs border border-gray-200 rounded-md hover:bg-gray-100 cursor-pointer mr-2"
                     >
                       <i className="fa fa-image" aria-hidden="true"></i>

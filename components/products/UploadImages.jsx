@@ -7,11 +7,14 @@ import { toast } from 'react-toastify';
 import ProductContext from '@/context/ProductContext';
 
 const UploadImages = memo(({ id }) => {
-  const { uploadProductImages, error, loading, clearErrors } =
+  const { uploadProductImages, productImages, error, loading, clearErrors } =
     useContext(ProductContext);
 
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
+
+  console.log('Product images in the upload images component');
+  console.log(productImages);
 
   const onChange = (e) => {
     const files = Array.from(e.target.files);

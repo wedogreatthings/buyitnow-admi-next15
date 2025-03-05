@@ -6,10 +6,12 @@ import React, { createContext, useState } from 'react';
 
 const ProductContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const ProductProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [updated, setUpdated] = useState(false);
+  const [productImages, setProductImages] = useState(null);
 
   const router = useRouter();
 
@@ -95,8 +97,10 @@ export const ProductProvider = ({ children }) => {
         error,
         loading,
         updated,
+        productImages,
         setUpdated,
         setLoading,
+        setProductImages,
         newProduct,
         uploadProductImages,
         updateProduct,
