@@ -63,12 +63,13 @@ export const ProductProvider = ({ children }) => {
       );
 
       if (data?.data) {
+        // Update product images by appending new images
+        setProductImages(data.data);
         setLoading(false);
-        router.push('/admin/products');
-        router.refresh();
       }
     } catch (error) {
       setError(error?.response?.data?.message);
+      setLoading(false);
     }
   };
 

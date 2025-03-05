@@ -85,32 +85,41 @@ export const getProduct = async (req, res, next) => {
 };
 
 export const uploadProductImages = async (req, res, next) => {
-  let product = await Product.findById(req.query.id);
+  try {
+    let product = await Product.findById(req.query.id);
 
-  if (!product) {
-    return next(new ErrorHandler('Product not found.', 404));
+    if (!product) {
+      return next(new ErrorHandler('Product not found.', 404));
+    }
+
+    const uploader = async (path) => await uploads(path, 'buyitnow/products');
+
+    const urls = [];
+    const files = req.files;
+
+    for (const file of files) {
+      const { path } = file;
+      const imgUrl = await uploader(path);
+      urls.push(imgUrl);
+      fs.unlinkSync(path);
+    }
+
+    // Append new images to existing images
+    const updatedImages = [...product.images, ...urls];
+
+    product = await Product.findByIdAndUpdate(
+      req.query.id,
+      { images: updatedImages },
+      { new: true }, // This ensures the updated document is returned
+    );
+
+    res.status(200).json({
+      data: updatedImages,
+      product,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  const uploader = async (path) => await uploads(path, 'buyitnow/products');
-
-  const urls = [];
-  const files = req.files;
-
-  for (const file of files) {
-    const { path } = file;
-    const imgUrl = await uploader(path);
-    urls.push(imgUrl);
-    fs.unlinkSync(path);
-  }
-
-  product = await Product.findByIdAndUpdate(req.query.id, {
-    images: urls,
-  });
-
-  res.status(200).json({
-    data: urls,
-    product,
-  });
 };
 
 // In your product controllers
