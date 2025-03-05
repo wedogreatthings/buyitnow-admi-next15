@@ -6,7 +6,12 @@ const Overview = dynamic(() => import('@/components/overview/Overview'), {
   loading: () => <Loading />,
 });
 
-import { getAllOrders } from '@/backend/utils/server-only-methods';
+import {
+  getAllOrders,
+  getCategoryData,
+  getDeliveryPrice,
+  getPaymentTypeData,
+} from '@/backend/utils/server-only-methods';
 
 export const metadata = {
   title: 'Dashboard - Overview',
@@ -15,8 +20,18 @@ export const metadata = {
 // eslint-disable-next-line react/prop-types
 const HomePage = async ({ searchParams }) => {
   const orders = await getAllOrders(await searchParams);
+  const deliveryPriceData = await getDeliveryPrice();
+  const categoryData = await getCategoryData();
+  const paymentTypeData = await getPaymentTypeData();
 
-  return <Overview orders={orders} />;
+  return (
+    <Overview
+      orders={orders}
+      deliveryPrices={deliveryPriceData?.deliveryPrice}
+      categories={categoryData?.categories}
+      paymentTypes={paymentTypeData?.paymentTypes}
+    />
+  );
 };
 
 export default HomePage;
