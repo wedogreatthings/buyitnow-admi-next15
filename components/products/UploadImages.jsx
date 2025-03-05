@@ -141,7 +141,7 @@ const UploadImages = memo(({ id }) => {
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(img)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 >
                   <i className="fa fa-trash" aria-hidden="true"></i>
                 </button>
