@@ -4,7 +4,6 @@
 import React, { useContext, useState, useEffect, memo } from 'react';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
-import { X } from 'lucide-react';
 import ProductContext from '@/context/ProductContext';
 
 const UploadImages = memo(({ id }) => {
@@ -165,9 +164,9 @@ const UploadImages = memo(({ id }) => {
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(img)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 >
-                  <X size={16} />
+                  <i className="fa fa-trash" aria-hidden="true"></i>
                 </button>
               </div>
             ))}
