@@ -26,13 +26,6 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
-  console.log('dataCategory: ');
-  console.log(dataCategory);
-  console.log('dataPayment: ');
-  console.log(dataPayment);
-  console.log('dataDeliveryPrice: ');
-  console.log(dataDeliveryPrice);
-
   const colors = [
     'bg-purple-500',
     'bg-red-500',

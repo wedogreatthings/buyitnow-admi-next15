@@ -26,7 +26,7 @@ const OverviewAllStats = dynamic(() => import('./OverviewAllStats'), {
 const Overview = ({ orders, deliveryPrices, categories, paymentTypes }) => {
   const { deleteOrder, error, loading, setLoading, clearErrors } =
     useContext(OrderContext);
-  const { setDeliveryPrice } = useContext(SettingsContext);
+  const { setDeliveryPrice, setCategories } = useContext(SettingsContext);
 
   const [open, setOpen] = useState(false);
   const [openStats, setOpenStats] = useState(false);
@@ -36,6 +36,7 @@ const Overview = ({ orders, deliveryPrices, categories, paymentTypes }) => {
     if (loading || orders !== null) {
       setLoading(false);
       setDeliveryPrice(orders?.deliveryPrice[0]?.deliveryPrice);
+      setCategories(categories);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders]);
