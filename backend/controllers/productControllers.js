@@ -16,29 +16,15 @@ import Category from '../models/category';
 import Cart from '../models/cart';
 
 export const newProduct = async (req, res, next) => {
-  console.log('Creating new product with data:', req.user);
   const user = await User.findOne({ email: req.user.email }).select('_id');
 
-  console.log('User found:', user);
-
   if (!user) {
-    console.error('No user found with the provided email:', req.user.email);
-
     return next(new ErrorHandler('No User found', 404));
   }
 
   req.body.user = user._id;
-  let product;
 
-  await Product.create(req.body)
-    .then((createdProduct) => {
-      product = createdProduct;
-    })
-    .catch((error) => {
-      console.error('Error creating product:', error);
-      return next(new ErrorHandler('Error creating product', 500));
-    });
-
+  const product = await Product.create(req.body);
   res.status(201).json({
     product,
   });
