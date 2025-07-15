@@ -1,17 +1,17 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
+import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
 
 export default withAuth(
   async function middleware(req) {
     const url = req.nextUrl.pathname;
     const userRole = req?.nextauth?.token?.user?.role;
 
-    if (url.startsWith("/api")) {
-      NextResponse.next().headers.append("Access-Control-Allow-Origin", "*");
-    }
+    // if (url.startsWith("/api")) {
+    //   NextResponse.next().headers.append("Access-Control-Allow-Origin", "*");
+    // }
 
-    if (url?.startsWith("/admin") && userRole !== "admin") {
-      return NextResponse.redirect(new URL("/", req.url));
+    if (url?.startsWith('/admin') && userRole !== 'admin') {
+      return NextResponse.redirect(new URL('/', req.url));
     }
   },
   {
@@ -22,9 +22,9 @@ export default withAuth(
         }
       },
     },
-  }
+  },
 );
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ['/admin/:path*'],
 };
