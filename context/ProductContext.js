@@ -34,15 +34,19 @@ export const ProductProvider = ({ children }) => {
 
   const newProduct = async (product) => {
     try {
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
-        product,
-      );
+      await axios
+        .post(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, product)
+        .then((data) => {
+          console.log('New product created:', data);
+        })
+        .catch((error) => {
+          console.error('Error creating new product:', error);
+        });
 
-      if (data) {
-        router.push('/admin/products');
-        router.refresh();
-      }
+      // if (data) {
+      //   router.push('/admin/products');
+      //   router.refresh();
+      // }
     } catch (error) {
       setError(error?.response?.data?.message);
     }
