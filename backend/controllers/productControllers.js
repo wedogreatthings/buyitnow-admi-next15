@@ -23,8 +23,17 @@ export const newProduct = async (req, res, next) => {
   }
 
   req.body.user = user._id;
+  let product;
 
-  const product = await Product.create(req.body);
+  await Product.create(req.body)
+    .then((createdProduct) => {
+      product = createdProduct;
+    })
+    .catch((error) => {
+      console.error('Error creating product:', error);
+      return next(new ErrorHandler('Error creating product', 500));
+    });
+
   res.status(201).json({
     product,
   });
