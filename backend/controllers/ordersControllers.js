@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Order from '../models/order';
 import Address from '../models/address';
 import APIFilters from '../utils/APIFilters';
@@ -14,6 +15,7 @@ import {
 } from '../pipelines/productPipelines';
 import { userThatBoughtMostSinceBeginningPipeline } from '../pipelines/userPipelines';
 import DeliveryPrice from '../models/deliveryPrice';
+import ErrorHandler from '../utils/errorHandler';
 
 export const getOrders = async (req, res) => {
   const resPerPage = 2;
@@ -148,7 +150,7 @@ export const getOrder = async (req, res) => {
   );
 
   if (!order) {
-    return next(new ErrorHandler('No Order found', 404));
+    return new ErrorHandler('No Order found', 404);
   }
 
   res.status(200).json({
@@ -160,7 +162,7 @@ export const updateOrder = async (req, res) => {
   let order = await Order.findById(req.query.id);
 
   if (!order) {
-    return next(new ErrorHandler('No Order found', 404));
+    return new ErrorHandler('No Order found', 404);
   }
 
   if (req.body.orderStatus) {
@@ -185,7 +187,7 @@ export const deleteOrder = async (req, res) => {
   let order = await Order.findById(req.query.id);
 
   if (!order) {
-    return next(new ErrorHandler('No Order found', 404));
+    return new ErrorHandler('No Order found', 404);
   }
 
   await order.deleteOne();

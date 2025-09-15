@@ -120,7 +120,7 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       enum: {
-        values: ['unpaid', 'processing', 'paid', 'refunded', 'failed'],
+        values: ['unpaid', 'paid', 'refunded', 'cancelled'],
         message: 'Statut de paiement non valide: {VALUE}',
       },
       default: 'unpaid',
@@ -129,7 +129,7 @@ const orderSchema = new mongoose.Schema(
     orderStatus: {
       type: String,
       enum: {
-        values: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
+        values: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'],
         message: 'Statut de commande non valide: {VALUE}',
       },
       default: 'Processing',
