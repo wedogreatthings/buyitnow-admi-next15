@@ -1,8 +1,8 @@
 import Category from '../models/category';
-import Contact from '../models/contact';
 import DeliveryPrice from '../models/deliveryPrice';
 import PaymentType from '../models/paymentType';
 import Product from '../models/product';
+import ErrorHandler from '../utils/errorHandler';
 
 export const newDeliveryPrice = async (req, res) => {
   const deliveryPrice = await DeliveryPrice.countDocuments();
@@ -35,7 +35,7 @@ export const deleteDeliveryPrice = async (req, res) => {
   const deliveryPrice = await DeliveryPrice.findById(req.query.id);
 
   if (!deliveryPrice) {
-    return next(new ErrorHandler('Delivery Price not found.', 404));
+    return new ErrorHandler('Delivery Price not found.', 404);
   }
 
   await deliveryPrice.deleteOne();
@@ -76,7 +76,7 @@ export const deletePayment = async (req, res) => {
   const payment = await PaymentType.findById(req.query.id);
 
   if (!payment) {
-    return next(new ErrorHandler('Category not found.', 404));
+    return new ErrorHandler('Category not found.', 404);
   }
 
   await payment.deleteOne();
@@ -117,7 +117,7 @@ export const deleteCategory = async (req, res) => {
   const deletingCategory = await Category.findById(req.query.id);
 
   if (!deletingCategory) {
-    return next(new ErrorHandler('Category not found.', 404));
+    return new ErrorHandler('Category not found.', 404);
   }
 
   const productsWithThatCategory = await Product.countDocuments({
@@ -136,30 +136,4 @@ export const deleteCategory = async (req, res) => {
       success: true,
     });
   }
-};
-
-export const getMessages = async (req, res) => {
-  try {
-    const messages = await Contact.find()
-      .populate('from')
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      messages,
-    });
-  } catch (error) {}
-};
-
-export const updateMessage = async (req, res) => {
-  const message = await Contact.findById(req.query.id);
-
-  if (!message) {
-    return next(new ErrorHandler('No Message found', 404));
-  }
-
-  await Contact.findByIdAndUpdate(req.query.id, req.body);
-
-  res.status(200).json({
-    success: true,
-  });
 };
