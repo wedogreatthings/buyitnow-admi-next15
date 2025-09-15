@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Order from '../models/order';
 import Address from '../models/address';
+import Product from '../models/product';
 import APIFilters from '../utils/APIFilters';
 import {
   listOrdersPaidorUnapidThisMonthPipeline,
@@ -188,6 +189,53 @@ export const updateOrder = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: `Cannot change payment status from '${currentStatus}' to '${newStatus}'`,
+      });
+    }
+
+    // Gestion des mises à jour de stock et sold selon le changement de statut
+    try {
+      // Si on passe de 'unpaid' à 'paid' : ajouter aux ventes
+      if (currentStatus === 'unpaid' && newStatus === 'paid') {
+        const bulkOpsForPaid = order.orderItems.map((item) => ({
+          updateOne: {
+            filter: { _id: item.product },
+            update: {
+              $inc: {
+                sold: item.quantity,
+              },
+            },
+          },
+        }));
+
+        if (bulkOpsForPaid.length > 0) {
+          await Product.bulkWrite(bulkOpsForPaid);
+        }
+      }
+
+      // Si on passe de 'paid' à 'refunded' : annuler les ventes et restaurer le stock
+      else if (currentStatus === 'paid' && newStatus === 'refunded') {
+        const bulkOpsForRefunded = order.orderItems.map((item) => ({
+          updateOne: {
+            filter: { _id: item.product },
+            update: {
+              $inc: {
+                sold: -item.quantity,
+                stock: item.quantity,
+              },
+            },
+          },
+        }));
+
+        if (bulkOpsForRefunded.length > 0) {
+          await Product.bulkWrite(bulkOpsForRefunded);
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du stock/sold:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la mise à jour du stock des produits',
+        error: error.message,
       });
     }
 
