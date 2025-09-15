@@ -36,24 +36,6 @@ export const getAllOrders = async (searchParams) => {
   return data;
 };
 
-export const getContactData = async () => {
-  const nextCookies = await cookies();
-
-  const cookieName = getCookieName();
-  const nextAuthSessionToken = nextCookies.get(cookieName);
-
-  const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/contact`,
-    {
-      headers: {
-        Cookie: `${nextAuthSessionToken?.name}=${nextAuthSessionToken?.value}`,
-      },
-    },
-  );
-
-  return data;
-};
-
 export const getOrdersInfo = async (searchParams) => {
   const nextCookies = await cookies();
 

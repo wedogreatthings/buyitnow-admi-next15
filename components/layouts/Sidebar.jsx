@@ -132,20 +132,6 @@ const Sidebar = memo(() => {
             </Link>
           </li>
 
-          <li>
-            {' '}
-            <Link
-              onClick={() => setActivePart('')}
-              href="/admin/contact"
-              className={`flex gap-2 text-sm px-3 py-2 text-gray-800 hover:bg-blue-100 hover:text-blue-500 rounded-md ${pathName === '/admin/contact' && 'bg-blue-100'}`}
-            >
-              <span>
-                <i className="fa-solid fa-message" aria-hidden="true"></i>
-              </span>
-              <span>Contact</span>
-            </Link>
-          </li>
-
           <li className="block px-3 py-2 text-gray-800 rounded-md">
             <p
               onClick={() => {
