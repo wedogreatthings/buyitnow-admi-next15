@@ -172,9 +172,33 @@ export const updateOrder = async (req, res) => {
   }
 
   if (req.body.paymentStatus) {
-    order = await Order.findByIdAndUpdate(req.query.id, {
-      paymentStatus: req.body.paymentStatus,
-    });
+    const currentStatus = order.paymentStatus;
+    const newStatus = req.body.paymentStatus;
+
+    // Définir les transitions autorisées
+    const allowedTransitions = {
+      unpaid: ['paid', 'cancelled'],
+      paid: ['refunded', 'cancelled'],
+      refunded: [], // Aucune transition autorisée
+      cancelled: [], // Aucune transition autorisée
+    };
+
+    // Vérifier si la transition est autorisée
+    if (!allowedTransitions[currentStatus].includes(newStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot change payment status from '${currentStatus}' to '${newStatus}'`,
+      });
+    }
+
+    // Effectuer la mise à jour si la transition est valide
+    order = await Order.findByIdAndUpdate(
+      req.query.id,
+      {
+        paymentStatus: newStatus,
+      },
+      { new: true },
+    ); // Ajout de { new: true } pour retourner l'ordre mis à jour
   }
 
   res.status(200).json({

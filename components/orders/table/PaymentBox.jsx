@@ -11,6 +11,54 @@ const PaymentBox = ({ order }) => {
 
   const [paymentStatus, setPaymentStatus] = useState(order?.paymentStatus);
 
+  // Définir les transitions autorisées
+  const allowedTransitions = {
+    unpaid: ['paid', 'cancelled'],
+    paid: ['refunded', 'cancelled'],
+    refunded: [], // Aucune transition autorisée
+    cancelled: [], // Aucune transition autorisée
+  };
+
+  // Obtenir les options disponibles selon le statut actuel
+  const getAvailableOptions = (currentStatus) => {
+    const transitions = allowedTransitions[currentStatus] || [];
+    // Inclure toujours le statut actuel + les transitions autorisées
+    return [currentStatus, ...transitions];
+  };
+
+  const availableOptions = getAvailableOptions(paymentStatus);
+
+  // Configuration des couleurs selon le statut
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'paid':
+        return 'text-green-600';
+      case 'unpaid':
+        return 'text-red-600';
+      case 'refunded':
+        return 'text-blue-600';
+      case 'cancelled':
+        return 'text-gray-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  const getSelectColor = (status) => {
+    switch (status) {
+      case 'paid':
+        return 'border-green-300 focus:border-green-500 focus:ring-green-200';
+      case 'unpaid':
+        return 'border-red-300 focus:border-red-500 focus:ring-red-200';
+      case 'refunded':
+        return 'border-blue-300 focus:border-blue-500 focus:ring-blue-200';
+      case 'cancelled':
+        return 'border-gray-300 focus:border-gray-500 focus:ring-gray-200';
+      default:
+        return 'border-gray-300 focus:border-gray-500 focus:ring-gray-200';
+    }
+  };
+
   useEffect(() => {
     if (updated) {
       setUpdated(false);
@@ -27,39 +75,57 @@ const PaymentBox = ({ order }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
-  const handleChange = () => {
-    let newStatus;
+  const handleChange = (e) => {
+    const newStatus = e.target.value;
 
-    if (paymentStatus === 'unpaid') {
-      newStatus = 'paid';
-      setPaymentStatus(newStatus);
-    } else {
-      newStatus = 'unpaid';
-      setPaymentStatus(newStatus);
+    // Vérifier si le changement est nécessaire
+    if (newStatus === paymentStatus) {
+      return; // Pas de changement
     }
 
+    // Mettre à jour l'état local
+    setPaymentStatus(newStatus);
+
+    // Appeler l'API pour la mise à jour
     const orderData = { paymentStatus: newStatus };
     updateOrder(order?._id, orderData);
   };
 
+  const isDisabled = availableOptions.length === 1; // Désactiver si seulement le statut actuel est disponible
+
   return (
     <td className="px-6 py-2">
-      <label className="flex items-center">
-        <input
+      <div className="flex items-center">
+        <select
           name="paymentStatus"
-          type="checkbox"
           value={paymentStatus}
-          defaultChecked={paymentStatus === 'paid' ? true : false}
-          className={`h-4 w-4 ${paymentStatus === 'paid' ? 'accent-green-500 border-green-500' : 'accent-red-500 border-red-700'}`}
           onChange={handleChange}
-        />
-        <span
-          className={`ml-2 ${paymentStatus === 'paid' ? 'text-green-500' : 'text-red-500'}`}
+          disabled={isDisabled}
+          className={`
+            px-3 py-2 rounded-md border text-sm font-medium capitalize
+            ${getSelectColor(paymentStatus)}
+            ${getStatusColor(paymentStatus)}
+            ${
+              isDisabled
+                ? 'bg-gray-100 cursor-not-allowed opacity-60'
+                : 'bg-white hover:bg-gray-50 cursor-pointer'
+            }
+            focus:outline-none focus:ring-2 transition-colors duration-200
+          `}
         >
-          {' '}
-          {paymentStatus}{' '}
-        </span>
-      </label>
+          {availableOptions.map((status) => (
+            <option key={status} value={status} className="capitalize">
+              {status}
+            </option>
+          ))}
+        </select>
+
+        {isDisabled && (
+          <span className="ml-2 text-xs text-gray-500 italic">
+            (Final status)
+          </span>
+        )}
+      </div>
     </td>
   );
 };
