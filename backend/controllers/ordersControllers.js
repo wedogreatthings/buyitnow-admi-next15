@@ -32,9 +32,7 @@ export const getOrders = async (req, res) => {
       'shippingInfo user',
     );
   } else {
-    const apiFilters = new APIFilters(Order.find(), req.query)
-      .search()
-      .filter();
+    const apiFilters = new APIFilters(Order.find(), req.query).filter();
 
     orders = await apiFilters.query
       .populate('shippingInfo user')
