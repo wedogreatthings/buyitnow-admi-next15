@@ -24,9 +24,9 @@ export const getOrders = async (req, res) => {
   const ordersCount = await Order.countDocuments();
 
   let orders;
-  let filteredOrdersCount;
-  let totalPages;
-  let result;
+  let filteredOrdersCount = 0;
+  let totalPages = 0;
+  let result = 0;
 
   if (req.query.keyword) {
     const orderNumber = req.query.keyword;

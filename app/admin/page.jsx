@@ -24,6 +24,8 @@ const HomePage = async ({ searchParams }) => {
   const categoryData = await getCategoryData();
   const paymentTypeData = await getPaymentTypeData();
 
+  console.log('HomePage Orders:', orders);
+
   return (
     <Overview
       orders={orders}
