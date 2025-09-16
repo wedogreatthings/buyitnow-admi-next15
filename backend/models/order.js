@@ -208,7 +208,7 @@ const orderSchema = new mongoose.Schema(
 
 // Indexer pour les requêtes fréquentes
 orderSchema.index({ user: 1, createdAt: -1 });
-orderSchema.index({ orderStatus: 1, paymentStatus: 1 });
+orderSchema.index({ orderNumber: 1, orderStatus: 1, paymentStatus: 1 });
 orderSchema.index({ createdAt: -1 });
 
 // Créer un identifiant unique au format ORD-YYYYMMDD-XXXXX
