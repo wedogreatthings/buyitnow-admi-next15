@@ -69,20 +69,18 @@ const UpdateProduct = memo(({ data }) => {
       </h1>
 
       <form onSubmit={submitHandler}>
-        {data?.updatable && (
-          <div className="mb-4">
-            <label className="block mb-1"> Name </label>
-            <input
-              type="text"
-              className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
-              placeholder="Product name"
-              name="name"
-              value={name}
-              onChange={onChange}
-              required
-            />
-          </div>
-        )}
+        <div className="mb-4">
+          <label className="block mb-1"> Name </label>
+          <input
+            type="text"
+            className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
+            placeholder="Product name"
+            name="name"
+            value={name}
+            onChange={onChange}
+            required
+          />
+        </div>
 
         <div className="mb-4 mt-5">
           <label className="block mb-1"> Description </label>
@@ -114,36 +112,34 @@ const UpdateProduct = memo(({ data }) => {
               </div>
             </div>
           </div>
-          {data?.updatable && (
-            <div className="mb-4">
-              <label className="block mb-1"> Category </label>
-              <div className="relative">
-                <select
-                  className="block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
-                  name="category"
-                  value={category}
-                  onChange={onChange}
-                  required
+          <div className="mb-4">
+            <label className="block mb-1"> Category </label>
+            <div className="relative">
+              <select
+                className="block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-hidden focus:border-gray-400 w-full"
+                name="category"
+                value={category}
+                onChange={onChange}
+                required
+              >
+                {categories.map((category) => (
+                  <option key={category?._id} value={category?._id}>
+                    {category?.categoryName}
+                  </option>
+                ))}
+              </select>
+              <i className="absolute inset-y-0 right-0 p-2 text-gray-400">
+                <svg
+                  width="22"
+                  height="22"
+                  className="fill-current"
+                  viewBox="0 0 20 20"
                 >
-                  {categories.map((category) => (
-                    <option key={category?._id} value={category?._id}>
-                      {category?.categoryName}
-                    </option>
-                  ))}
-                </select>
-                <i className="absolute inset-y-0 right-0 p-2 text-gray-400">
-                  <svg
-                    width="22"
-                    height="22"
-                    className="fill-current"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M7 10l5 5 5-5H7z"></path>
-                  </svg>
-                </i>
-              </div>
+                  <path d="M7 10l5 5 5-5H7z"></path>
+                </svg>
+              </i>
             </div>
-          )}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-2 mt-5">
