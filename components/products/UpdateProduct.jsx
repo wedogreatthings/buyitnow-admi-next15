@@ -26,9 +26,7 @@ const UpdateProduct = memo(({ data }) => {
 
   // Vérifier si le produit peut être activé (toutes les données requises + images)
   const canBeActivated =
-    data?.updatable &&
-    data?.product?.images &&
-    data?.product?.images.length > 0;
+    data?.product?.images && data?.product?.images.length > 0;
 
   useEffect(() => {
     if (updated) {
