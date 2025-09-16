@@ -4,7 +4,7 @@ import { arrayHasData, customLoader } from '@/helpers/helpers';
 import Image from 'next/image';
 
 const ListProductSoldThisMonth = ({ productSoldThisMonth }) => {
-  return arrayHasData(productSoldThisMonth) ? (
+  return !arrayHasData(productSoldThisMonth) ? (
     <div className="w-full">
       <p className="font-bold text-xl text-center">
         No Products sold this month
@@ -36,22 +36,22 @@ const ListProductSoldThisMonth = ({ productSoldThisMonth }) => {
                 loader={customLoader}
                 className="w-7 h-7 rounded-full mr-4"
                 src={
-                  product?.productImage[0] !== undefined
+                  product?.productImage?.[0] !== undefined
                     ? product?.productImage[0]
                     : '/images/default_product.png'
                 }
-                alt={product?.productName[0]}
-                title={product?.productName[0]}
+                alt={product?.productName?.[0] || 'Product'}
+                title={product?.productName?.[0] || 'Product'}
                 width={7}
                 height={7}
               />
-              {product?.productName[0]}
+              {product?.productName?.[0] || 'N/A'}
             </td>
-            <td className={`px-6 py-2 ${product?.stock <= 5 && 'bg-red-500'}`}>
-              $ {product?.totalAmount}
+            <td className="px-6 py-2">$ {product?.totalAmount || 0}</td>
+            <td className="px-6 py-2">{product?.totalQuantity || 0}</td>
+            <td className="px-6 py-2">
+              {product?.productCategory?.[0] || 'N/A'}
             </td>
-            <td className="px-6 py-2">{product?.totalQuantity}</td>
-            <td className="px-6 py-2">{product?.productCategory[0]}</td>
           </tr>
         ))}
       </tbody>

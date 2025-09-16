@@ -37,7 +37,14 @@ const NewProduct = () => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    newProduct(product);
+    // Convertir price et stock en nombres
+    const productData = {
+      ...product,
+      price: Number(price),
+      stock: Number(stock),
+    };
+
+    newProduct(productData);
   };
 
   return (
