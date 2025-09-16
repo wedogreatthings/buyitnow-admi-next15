@@ -17,7 +17,7 @@ const OrderItem = ({ order, deleteHandler }) => {
       <td
         className={`px-3 py-2 ${order?.shippingInfo === undefined ? 'text-red-500' : 'text-green-500'}`}
       >
-        {order?.shippingInfo === undefined ? 'No' : 'Delivery'}
+        {order?.shippingInfo === undefined ? 'In' : 'Not In'}
       </td>
       {order?.shippingInfo !== undefined ? (
         <td

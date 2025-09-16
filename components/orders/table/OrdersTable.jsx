@@ -31,7 +31,7 @@ const OrdersTable = ({ orders, itemCount, deleteHandler }) => {
                 Platform
               </th>
               <th scope="col" className="px-6 py-3">
-                Shipping Status
+                Delivery
               </th>
               <th scope="col" className="px-6 py-3">
                 Order Status
