@@ -55,7 +55,14 @@ const UpdateOrder = memo(({ order }) => {
               onChange={(e) => setOrderStatus(e.target.value)}
               required
             >
-              {['Processing', 'Shipped', 'Delivered'].map((status) => (
+              {[
+                'Unpaid',
+                'Processing',
+                'Shipped',
+                'Delivered',
+                'Cancelled',
+                'Returned',
+              ].map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>
