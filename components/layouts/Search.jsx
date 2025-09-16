@@ -47,7 +47,7 @@ const Search = ({ setLoading }) => {
       />
       <button
         type="button"
-        className="px-1 py-1 inline-block text-white border border-transparent bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        className="px-1 py-1 inline-block text-white border border-transparent bg-blue-600  rounded-md hover:bg-blue-700"
         onClick={submitHandler}
       >
         Search

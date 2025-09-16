@@ -13,7 +13,7 @@ const OrdersTable = ({ orders, itemCount }) => {
         <p className="mr-4 font-bold text-lg">{itemCount || 0} Order(s)</p>
       </div>
 
-      {itemCount === 0 || !hasOrders ? (
+      {itemCount === 0 && (
         <div className="w-full mt-8 py-12 bg-gray-50 rounded-lg">
           <div className="text-center">
             <div className="mx-auto w-24 h-24 mb-4 text-gray-300">
@@ -29,6 +29,41 @@ const OrdersTable = ({ orders, itemCount }) => {
               Orders will appear here when customers place them.
             </p>
           </div>
+        </div>
+      )}
+
+      {hasOrders ? (
+        <div className="overflow-x-auto shadow-sm border border-gray-200 rounded-lg">
+          <table className="w-full text-sm text-left bg-white">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+              <tr>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  Order Number
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  Total Amount
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  Payment Status
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  Payment Method
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  Shipping Type
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold">
+                  Order Status
+                </th>
+                <th scope="col" className="px-6 py-4 font-semibold text-center">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              <OrderItem key={orders?._id} order={orders} />
+            </tbody>
+          </table>
         </div>
       ) : (
         <div className="overflow-x-auto shadow-sm border border-gray-200 rounded-lg">
