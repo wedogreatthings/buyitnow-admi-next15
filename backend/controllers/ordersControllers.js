@@ -25,6 +25,8 @@ export const getOrders = async (req, res) => {
 
   let orders;
   let filteredOrdersCount;
+  let totalPages;
+  let result;
 
   if (req.query.keyword) {
     const orderNumber = req.query.keyword;
@@ -46,10 +48,10 @@ export const getOrders = async (req, res) => {
       .clone()
       .populate('shippingInfo user')
       .sort({ createdAt: -1 });
-  }
 
-  const result = ordersCount / resPerPage;
-  const totalPages = Number.isInteger(result) ? result : Math.ceil(result);
+    result = ordersCount / resPerPage;
+    totalPages = Number.isInteger(result) ? result : Math.ceil(result);
+  }
 
   /////////************ ************/////////
 
