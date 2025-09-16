@@ -75,7 +75,7 @@ const SingleOrderInfo = ({ order }) => {
           <p className="text-gray-400 mb-1">Person</p>
           <ul className="text-gray-600">
             <li>{order?.user?.name}</li>
-            <li>Phone: {order?.user?.phoneNo}</li>
+            <li>Phone: {order?.user?.phone}</li>
             <li>Email: {order?.user?.email}</li>
           </ul>
         </div>
