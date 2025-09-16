@@ -29,6 +29,7 @@ const Orders = memo(({ orders }) => {
   const [openStats, setOpenStats] = useState(false);
 
   console.log('Orders Component Orders:', orders);
+  console.log('Filtered Orders Count:', orders?.filteredOrdersCount);
 
   useEffect(() => {
     if (loading) {
