@@ -24,8 +24,6 @@ const OverviewAllStats = dynamic(() => import('./OverviewAllStats'), {
 });
 
 const Overview = ({ orders, deliveryPrices, categories, paymentTypes }) => {
-  console.log('Overview Orders:', orders);
-  console.log('Filtered Orders Count:', orders?.filteredOrdersCount);
   const { deleteOrder, error, loading, setLoading, clearErrors } =
     useContext(OrderContext);
   const { setDeliveryPrice, setCategories } = useContext(SettingsContext);

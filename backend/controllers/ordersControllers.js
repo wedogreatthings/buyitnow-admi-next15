@@ -33,7 +33,7 @@ export const getOrders = async (req, res) => {
       'shippingInfo user',
     );
 
-    console.log('Found Order:', orders);
+    filteredOrdersCount = orders?.length;
   } else {
     const apiFilters = new APIFilters(Order.find(), req.query).filter();
 
