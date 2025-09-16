@@ -28,7 +28,6 @@ export const getOrders = async (req, res) => {
 
   if (req.query.keyword) {
     const orderNumber = req.query.keyword;
-    console.log('Order Number:', orderNumber);
     orders = await Order.findOne({ orderNumber: orderNumber }).populate(
       'shippingInfo user',
     );
