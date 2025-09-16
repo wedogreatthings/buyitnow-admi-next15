@@ -21,7 +21,14 @@ const UpdateProduct = memo(({ data }) => {
     price: data?.product?.price,
     stock: data?.product?.stock,
     category: defaultCategory?._id,
+    isActive: data?.product?.isActive || false,
   });
+
+  // Vérifier si le produit peut être activé (toutes les données requises + images)
+  const canBeActivated =
+    data?.updatable &&
+    data?.product?.images &&
+    data?.product?.images.length > 0;
 
   useEffect(() => {
     if (updated) {
@@ -36,16 +43,25 @@ const UpdateProduct = memo(({ data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
-  const { name, description, price, stock, category } = product;
+  const { name, description, price, stock, category, isActive } = product;
 
   const onChange = (e) => {
-    setProduct({ ...product, [e.target.name]: e.target.value });
+    const value =
+      e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setProduct({ ...product, [e.target.name]: value });
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
 
-    updateProduct(product, data?.product?._id);
+    // Convertir price et stock en nombres
+    const updatedProduct = {
+      ...product,
+      price: Number(price),
+      stock: Number(stock),
+    };
+
+    updateProduct(updatedProduct, data?.product?._id);
   };
 
   return (
@@ -149,6 +165,30 @@ const UpdateProduct = memo(({ data }) => {
               </div>
             </div>
           </div>
+
+          {/* Champ isActive - affiché seulement si le produit peut être activé */}
+          {canBeActivated && (
+            <div className="mb-4">
+              <label className="block mb-1"> Status </label>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  name="isActive"
+                  checked={isActive}
+                  onChange={onChange}
+                />
+                <label className="text-sm font-medium text-gray-700">
+                  Active Product
+                </label>
+              </div>
+              {!canBeActivated && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Product must have at least one image to be activated
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         <button

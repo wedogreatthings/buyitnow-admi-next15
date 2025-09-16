@@ -71,10 +71,22 @@ export const getProduct = async (req, res, next) => {
 
   let updatable;
 
+  // Un produit est updatable s'il n'a pas de commandes ET a au moins une image
   if (idsOfOrders[0] !== undefined) {
-    if (idsOfOrders.length === 0) updatable = true;
-    else updatable = false;
-  } else updatable = true;
+    if (
+      idsOfOrders.length === 0 &&
+      product.images &&
+      product.images.length > 0
+    ) {
+      updatable = true;
+    } else {
+      updatable = false;
+    }
+  } else if (product.images && product.images.length > 0) {
+    updatable = true;
+  } else {
+    updatable = false;
+  }
 
   res.status(200).json({
     product,

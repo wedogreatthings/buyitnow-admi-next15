@@ -28,10 +28,16 @@ const ProductsTable = ({ products, itemCount, deleteHandler }) => {
                 Stock
               </th>
               <th scope="col" className="px-6 py-3">
+                Sold
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Category
               </th>
               <th scope="col" className="px-6 py-3">
                 Price
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
               </th>
               <th scope="col" className="px-6 py-3">
                 Actions
@@ -41,7 +47,6 @@ const ProductsTable = ({ products, itemCount, deleteHandler }) => {
           <tbody>
             {products?.map((product) => (
               <tr className="bg-white" key={product._id}>
-                {console.log(product?.images)}
                 <td className="flex items-end px-6 py-2">
                   <Image
                     className="w-7 h-7 rounded-full mr-4"
@@ -62,8 +67,20 @@ const ProductsTable = ({ products, itemCount, deleteHandler }) => {
                 >
                   {product?.stock}
                 </td>
+                <td className="px-6 py-2">{product?.sold || 0}</td>
                 <td className="px-6 py-2">{product?.category?.categoryName}</td>
                 <td className="px-6 py-2">${product?.price}</td>
+                <td className="px-6 py-2">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      product?.isActive
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {product?.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
                 <td className="px-6 py-2">
                   <div>
                     <Link
