@@ -27,8 +27,10 @@ export const getOrders = async (req, res) => {
   let filteredOrdersCount;
 
   if (req.query.keyword) {
-    const id = req.query.keyword;
-    orders = await Order.findById(id).populate('shippingInfo user');
+    const orderNumber = req.query.keyword;
+    orders = await Order.findOne({ orderNumber: orderNumber }).populate(
+      'shippingInfo user',
+    );
   } else {
     const apiFilters = new APIFilters(Order.find(), req.query)
       .search()
