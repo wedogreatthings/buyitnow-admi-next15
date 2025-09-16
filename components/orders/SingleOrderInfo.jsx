@@ -39,12 +39,13 @@ const SingleOrderInfo = ({ order }) => {
               </span>
             )}{' '}
             {order?.shippingInfo !== undefined &&
-              (order?.orderStatus == 'Processing' ? (
+              (order?.orderStatus == 'Unpaid' ||
+              order?.orderStatus === 'Cancelled' ? (
                 <span className="text-red-500">
                   • {order?.orderStatus.toUpperCase()}
                 </span>
-              ) : order?.orderStatus === 'Cancelled' ? (
-                <span className="text-gray-500">
+              ) : order?.orderStatus === 'Returned' ? (
+                <span className="text-orange-500">
                   • {order?.orderStatus.toUpperCase()}
                 </span>
               ) : (
