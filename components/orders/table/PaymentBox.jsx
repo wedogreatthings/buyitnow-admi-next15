@@ -36,9 +36,9 @@ const PaymentBox = ({ order }) => {
       case 'unpaid':
         return 'text-red-600';
       case 'refunded':
-        return 'text-blue-600';
+        return 'text-orange-600';
       case 'cancelled':
-        return 'text-gray-600';
+        return 'text-red-600';
       default:
         return 'text-gray-600';
     }
@@ -51,9 +51,9 @@ const PaymentBox = ({ order }) => {
       case 'unpaid':
         return 'border-red-300 focus:border-red-500 focus:ring-red-200';
       case 'refunded':
-        return 'border-blue-300 focus:border-blue-500 focus:ring-blue-200';
+        return 'border-orange-300 focus:border-orange-500 focus:ring-orange-200';
       case 'cancelled':
-        return 'border-gray-300 focus:border-gray-500 focus:ring-gray-200';
+        return 'border-red-300 focus:border-red-500 focus:ring-red-200';
       default:
         return 'border-gray-300 focus:border-gray-500 focus:ring-gray-200';
     }
