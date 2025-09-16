@@ -15,7 +15,7 @@ const OrderItem = ({ order, deleteHandler }) => {
         {order?.paymentInfo?.typePayment?.toUpperCase()}
       </td>
       <td className="px-3 py-2">
-        {order?.shippingInfo === undefined ? 'In' : 'Not In'}
+        {order?.shippingInfo === undefined ? 'Not In' : 'In'}
       </td>
       {order?.shippingInfo !== undefined ? (
         <td className="px-3 py-2">{order?.orderStatus}</td>
