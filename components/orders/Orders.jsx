@@ -88,9 +88,11 @@ const Orders = memo(({ orders }) => {
         />
       )}
 
-      <div className="mb-6">
-        <CustomPagination totalPages={orders?.totalPages} />
-      </div>
+      {orders?.totalPages > 1 && (
+        <div className="mb-6">
+          <CustomPagination totalPages={orders?.totalPages} />
+        </div>
+      )}
     </div>
   );
 });
