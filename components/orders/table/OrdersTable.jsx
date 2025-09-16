@@ -3,8 +3,6 @@ import React from 'react';
 import OrderItem from './OrderItem';
 
 const OrdersTable = ({ orders, itemCount }) => {
-  console.log('OrdersTable Orders:', orders);
-  console.log('OrdersTable Item Count:', itemCount);
   // Vérifier si orders est un array valide avec des données
   const hasOrders = Array.isArray(orders) && orders.length > 0;
 

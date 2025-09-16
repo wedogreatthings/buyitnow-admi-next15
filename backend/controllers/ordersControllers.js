@@ -34,11 +34,7 @@ export const getOrders = async (req, res) => {
       'shippingInfo user',
     );
 
-    console.log('Orders length with keyword:', orders.length);
-
-    filteredOrdersCount = orders?.length;
-
-    console.log('Filtered Orders Count with keyword:', filteredOrdersCount);
+    if (orders) filteredOrdersCount = 1;
   } else {
     const apiFilters = new APIFilters(Order.find(), req.query).filter();
 

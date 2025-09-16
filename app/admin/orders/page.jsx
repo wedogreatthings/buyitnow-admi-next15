@@ -15,8 +15,6 @@ export const metadata = {
 const OrdersPage = async ({ searchParams }) => {
   const orders = await getOrdersInfo(await searchParams);
 
-  console.log('OrdersPage Orders:', orders);
-
   return <Orders orders={orders} />;
 };
 
