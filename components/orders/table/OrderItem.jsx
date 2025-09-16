@@ -14,17 +14,11 @@ const OrderItem = ({ order, deleteHandler }) => {
       <td className="px-3 py-2">
         {order?.paymentInfo?.typePayment?.toUpperCase()}
       </td>
-      <td
-        className={`px-3 py-2 ${order?.shippingInfo === undefined ? 'text-red-500' : 'text-green-500'}`}
-      >
+      <td className="px-3 py-2">
         {order?.shippingInfo === undefined ? 'In' : 'Not In'}
       </td>
       {order?.shippingInfo !== undefined ? (
-        <td
-          className={`px-3 py-2 ${order?.orderStatus === 'Processing' ? 'text-red-500' : 'text-green-500'}`}
-        >
-          {order?.orderStatus}
-        </td>
+        <td className="px-3 py-2">{order?.orderStatus}</td>
       ) : (
         <td className="px-3 py-2">None</td>
       )}
