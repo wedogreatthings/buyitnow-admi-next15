@@ -27,19 +27,50 @@ const OrderPurchased = ({ data }) => {
   const { deliveryPrice } = useContext(SettingsContext);
   const [open, setOpen] = useState(false);
 
-  const totalAmoutUnpaid = arrayHasData(data?.listOrdersUnpaidThisMonth)
+  // Calcul des montants totaux avec totalAmount au lieu de amountPaid
+  const totalAmountUnpaid = arrayHasData(data?.listOrdersUnpaidThisMonth)
     ? 0
     : data?.listOrdersUnpaidThisMonth?.reduce(
-        (acc, currentValue) => acc + currentValue?.paymentInfo?.amountPaid,
+        (acc, currentValue) => acc + (currentValue?.totalAmount || 0),
         0,
       );
 
   const totalAmountPaid = arrayHasData(data?.listOrdersPaidThisMonth)
     ? 0
     : data?.listOrdersPaidThisMonth?.reduce(
-        (acc, currentValue) => acc + currentValue?.paymentInfo?.amountPaid,
+        (acc, currentValue) => acc + (currentValue?.totalAmount || 0),
         0,
       );
+
+  // Calcul du nombre total d'articles
+  const totalItemsUnpaid = arrayHasData(data?.listOrdersUnpaidThisMonth)
+    ? 0
+    : data?.listOrdersUnpaidThisMonth?.reduce(
+        (acc, currentValue) =>
+          acc +
+          (currentValue?.itemCount ||
+            currentValue?.orderItems?.reduce(
+              (sum, item) => sum + item.quantity,
+              0,
+            ) ||
+            0),
+        0,
+      );
+
+  const totalItemsPaid = arrayHasData(data?.listOrdersPaidThisMonth)
+    ? 0
+    : data?.listOrdersPaidThisMonth?.reduce(
+        (acc, currentValue) =>
+          acc +
+          (currentValue?.itemCount ||
+            currentValue?.orderItems?.reduce(
+              (sum, item) => sum + item.quantity,
+              0,
+            ) ||
+            0),
+        0,
+      );
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <div className="flex justify-between my-5">
@@ -68,14 +99,21 @@ const OrderPurchased = ({ data }) => {
 
       <hr className="my-2 mx-9" />
 
-      <div className="flex justify-between">
-        <h1 className="text-sm ml-4 font-bold text-green-400">
+      <div className="flex justify-between items-center">
+        <h1 className="text-lg ml-4 font-bold text-green-600">
           List of Orders Paid This Month
         </h1>
-        <p className="mr-4 font-semibold text-sm">
-          Total Amount: ${totalAmountPaid.toFixed(2)}
-        </p>
+        <div className="mr-4 text-sm">
+          <p className="font-semibold text-green-600">
+            Total Amount: ${totalAmountPaid.toFixed(2)}
+          </p>
+          <p className="text-gray-600">
+            Total Items: {totalItemsPaid} • Orders:{' '}
+            {data?.listOrdersPaidThisMonth?.length || 0}
+          </p>
+        </div>
       </div>
+
       <OrdersPaidList
         listOrdersPaidThisMonth={data?.listOrdersPaidThisMonth}
         deliveryPrice={deliveryPrice}
@@ -83,14 +121,21 @@ const OrderPurchased = ({ data }) => {
 
       <hr className="my-2 mx-9" />
 
-      <div className="flex justify-between">
-        <h1 className="text-sm ml-4 font-bold text-red-400">
+      <div className="flex justify-between items-center">
+        <h1 className="text-lg ml-4 font-bold text-red-500">
           List of Orders Unpaid This Month
         </h1>
-        <p className="mr-4 font-semibold text-sm">
-          Total Amount: ${totalAmoutUnpaid.toFixed(2)}
-        </p>
+        <div className="mr-4 text-sm">
+          <p className="font-semibold text-red-500">
+            Total Amount: ${totalAmountUnpaid.toFixed(2)}
+          </p>
+          <p className="text-gray-600">
+            Total Items: {totalItemsUnpaid} • Orders:{' '}
+            {data?.listOrdersUnpaidThisMonth?.length || 0}
+          </p>
+        </div>
       </div>
+
       <OrdersUnpaidList
         listOrdersUnpaidThisMonth={data?.listOrdersUnpaidThisMonth}
         deliveryPrice={deliveryPrice}
