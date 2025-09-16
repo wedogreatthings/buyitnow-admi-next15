@@ -61,7 +61,9 @@ const OrdersTable = ({ orders, itemCount }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              <OrderItem key={orders?._id} order={orders} />
+              {orders.map((order) => (
+                <OrderItem key={order?._id} order={order} />
+              ))}
             </tbody>
           </table>
         </div>
@@ -94,9 +96,7 @@ const OrdersTable = ({ orders, itemCount }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {orders.map((order) => (
-                <OrderItem key={order?._id} order={order} />
-              ))}
+              <OrderItem key={orders?._id} order={orders} />
             </tbody>
           </table>
         </div>
