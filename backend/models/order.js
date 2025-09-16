@@ -129,7 +129,7 @@ const orderSchema = new mongoose.Schema(
     orderStatus: {
       type: String,
       enum: {
-        values: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'],
+        values: ['Unpaid', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'],
         message: 'Statut de commande non valide: {VALUE}',
       },
       default: 'Processing',
