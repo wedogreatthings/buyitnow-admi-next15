@@ -4,7 +4,7 @@ import { arrayHasData, customLoader } from '@/helpers/helpers';
 import Image from 'next/image';
 
 const ListProductSoldThisMonth = ({ productSoldThisMonth }) => {
-  return !arrayHasData(productSoldThisMonth) ? (
+  return arrayHasData(productSoldThisMonth) ? (
     <div className="w-full">
       <p className="font-bold text-xl text-center">
         No Products sold this month
