@@ -24,8 +24,7 @@ const OrderInfoStats = dynamic(() => import('./card/OrderInfoStats'), {
 });
 
 const Orders = memo(({ orders }) => {
-  const { deleteOrder, error, loading, setLoading, clearErrors } =
-    useContext(OrderContext);
+  const { error, loading, setLoading, clearErrors } = useContext(OrderContext);
   const [open, setOpen] = useState(false);
   const [openStats, setOpenStats] = useState(false);
 
@@ -43,10 +42,6 @@ const Orders = memo(({ orders }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
-
-  const deleteHandler = (id) => {
-    deleteOrder(id);
-  };
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <div className="flex justify-between">
@@ -87,7 +82,6 @@ const Orders = memo(({ orders }) => {
         <OrdersTable
           orders={orders?.orders}
           itemCount={orders?.filteredOrdersCount}
-          deleteHandler={deleteHandler}
         />
       )}
 

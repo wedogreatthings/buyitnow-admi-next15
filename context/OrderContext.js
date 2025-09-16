@@ -6,6 +6,7 @@ import React, { createContext, useState } from 'react';
 
 const OrderContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const OrderProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -40,20 +41,20 @@ export const OrderProvider = ({ children }) => {
     }
   };
 
-  const deleteOrder = async (id) => {
-    try {
-      const { data } = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${id}`,
-      );
+  // const deleteOrder = async (id) => {
+  //   try {
+  //     const { data } = await axios.delete(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/api/orders/${id}`,
+  //     );
 
-      if (data?.success) {
-        router.push(`/admin/orders`);
-        router.refresh();
-      }
-    } catch (error) {
-      setError(error?.response?.data?.message);
-    }
-  };
+  //     if (data?.success) {
+  //       router.push(`/admin/orders`);
+  //       router.refresh();
+  //     }
+  //   } catch (error) {
+  //     setError(error?.response?.data?.message);
+  //   }
+  // };
 
   const clearErrors = () => {
     setError(null);
@@ -69,7 +70,7 @@ export const OrderProvider = ({ children }) => {
         setUpdated,
         setLoading,
         updateOrder,
-        deleteOrder,
+        // deleteOrder,
         clearErrors,
       }}
     >

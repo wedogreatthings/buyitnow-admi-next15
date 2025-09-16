@@ -2,7 +2,7 @@
 import React from 'react';
 import OrderItem from './OrderItem';
 
-const OrdersTable = ({ orders, itemCount, deleteHandler }) => {
+const OrdersTable = ({ orders, itemCount }) => {
   // Vérifier si orders est un array valide avec des données
   const hasOrders = Array.isArray(orders) && orders.length > 0;
 
@@ -60,11 +60,7 @@ const OrdersTable = ({ orders, itemCount, deleteHandler }) => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {orders.map((order) => (
-                <OrderItem
-                  key={order?._id}
-                  order={order}
-                  deleteHandler={deleteHandler}
-                />
+                <OrderItem key={order?._id} order={order} />
               ))}
             </tbody>
           </table>

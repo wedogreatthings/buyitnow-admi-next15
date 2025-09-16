@@ -255,19 +255,19 @@ export const updateOrder = async (req, res) => {
   });
 };
 
-export const deleteOrder = async (req, res) => {
-  let order = await Order.findById(req.query.id);
+// export const deleteOrder = async (req, res) => {
+//   let order = await Order.findById(req.query.id);
 
-  if (!order) {
-    return new ErrorHandler('No Order found', 404);
-  }
+//   if (!order) {
+//     return new ErrorHandler('No Order found', 404);
+//   }
 
-  await order.deleteOne();
+//   await order.deleteOne();
 
-  res.status(200).json({
-    success: true,
-  });
-};
+//   res.status(200).json({
+//     success: true,
+//   });
+// };
 
 export const getOrdersPurchasedStats = async (req, res) => {
   // GETTING CURRENT MONTH and CURRENT YEAR

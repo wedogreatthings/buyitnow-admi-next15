@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import PaymentBox from './PaymentBox';
 
-const OrderItem = ({ order, deleteHandler }) => {
+const OrderItem = ({ order }) => {
   // Fonction pour obtenir la couleur du statut de commande
   const getOrderStatusColor = (status) => {
     switch (status) {
@@ -66,14 +66,6 @@ const OrderItem = ({ order, deleteHandler }) => {
           >
             <i className="fa fa-pencil" aria-hidden="true"></i>
           </Link>
-          <button
-            className="px-2 py-2 inline-block text-red-600 bg-white shadow-sm border border-gray-200 rounded-md hover:bg-red-50 hover:border-red-300 cursor-pointer transition-colors"
-            onClick={() => deleteHandler(order?._id)}
-            aria-label={`Delete order ${order?.orderNumber || order?._id}`}
-            title="Delete order"
-          >
-            <i className="fa fa-trash" aria-hidden="true"></i>
-          </button>
         </div>
       </td>
     </tr>
