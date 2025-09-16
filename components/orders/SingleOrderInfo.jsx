@@ -26,11 +26,11 @@ const SingleOrderInfo = ({ order }) => {
                 • {order?.paymentStatus?.toUpperCase()}
               </span>
             ) : order?.paymentStatus === 'refunded' ? (
-              <span className="text-blue-500">
+              <span className="text-orange-500">
                 • {order?.paymentStatus?.toUpperCase()}
               </span>
             ) : order?.paymentStatus === 'cancelled' ? (
-              <span className="text-gray-500">
+              <span className="text-red-500">
                 • {order?.paymentStatus?.toUpperCase()}
               </span>
             ) : (
