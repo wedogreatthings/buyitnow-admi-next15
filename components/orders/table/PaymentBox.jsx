@@ -22,8 +22,9 @@ const PaymentBox = ({ order }) => {
   // Obtenir les options disponibles selon le statut actuel
   const getAvailableOptions = (currentStatus) => {
     const transitions = allowedTransitions[currentStatus] || [];
-    // Inclure toujours le statut actuel + les transitions autorisées
-    return [currentStatus, ...transitions];
+    return transitions.length > 0
+      ? [currentStatus, ...transitions]
+      : [currentStatus];
   };
 
   const availableOptions = getAvailableOptions(paymentStatus);
@@ -75,6 +76,10 @@ const PaymentBox = ({ order }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, updated]);
 
+  useEffect(() => {
+    setPaymentStatus(order?.paymentStatus);
+  }, [order?.paymentStatus]);
+
   const handleChange = (e) => {
     const newStatus = e.target.value;
 
@@ -91,7 +96,7 @@ const PaymentBox = ({ order }) => {
     updateOrder(order?._id, orderData);
   };
 
-  const isDisabled = availableOptions.length === 1; // Désactiver si seulement le statut actuel est disponible
+  const isDisabled = allowedTransitions[paymentStatus]?.length === 0; // Désactiver si seulement le statut actuel est disponible
 
   return (
     <td className="px-6 py-2">
