@@ -137,51 +137,6 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    // Ajouter ces champs pour stocker des statistiques pré-calculées
-    // purchaseStats: {
-    //   totalOrders: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //   },
-    //   totalSpent: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //   },
-    //   avgOrderValue: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //   },
-    //   lastPurchaseAt: {
-    //     type: Date,
-    //     default: null,
-    //   },
-    //   favoriteCategory: {
-    //     type: String,
-    //     default: null,
-    //   },
-    // },
-
-    // // Stats d'engagement (optionnel)
-    // engagementStats: {
-    //   loginCount: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //   },
-    //   lastActiveAt: {
-    //     type: Date,
-    //     default: null,
-    //   },
-    //   activityScore: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //     max: 100,
-    //   },
-    // },
   },
   {
     timestamps: {
@@ -215,14 +170,6 @@ userSchema.index(
 userSchema.index({ createdAt: -1 });
 userSchema.index({ updatedAt: -1 });
 userSchema.index({ phone: 1 }, { sparse: true });
-
-// Index pour optimiser les requêtes de statistiques
-userSchema.index({ role: 1, createdAt: -1 });
-userSchema.index({ role: 1, verified: 1, createdAt: -1 });
-userSchema.index({ isActive: 1, lastLogin: -1 });
-
-// Index pour améliorer les performances des lookups depuis Orders
-userSchema.index({ _id: 1, role: 1 });
 
 // Middleware avant la sauvegarde
 userSchema.pre('save', async function (next) {
@@ -393,105 +340,6 @@ userSchema.methods.createPasswordResetToken = async function () {
 userSchema.virtual('fullName').get(function () {
   return this.name;
 });
-
-/**
- * Méthode pour mettre à jour les statistiques d'achat de l'utilisateur
- * À appeler après chaque commande
- */
-// userSchema.methods.updatePurchaseStats = async function(orderData) {
-//   try {
-//     this.purchaseStats.totalOrders += 1;
-//     this.purchaseStats.totalSpent += orderData.totalAmount || 0;
-//     this.purchaseStats.avgOrderValue =
-//       this.purchaseStats.totalSpent / this.purchaseStats.totalOrders;
-//     this.purchaseStats.lastPurchaseAt = new Date();
-
-//     // Mettre à jour la catégorie favorite si fournie
-//     if (orderData.favoriteCategory) {
-//       this.purchaseStats.favoriteCategory = orderData.favoriteCategory;
-//     }
-
-//     return await this.save();
-//   } catch (error) {
-//     logger.error('Error updating purchase stats', {
-//       userId: this._id,
-//       error: error.message
-//     });
-//     throw error;
-//   }
-// };
-
-/**
- * Méthode pour récupérer les stats d'achat depuis les commandes
- * Utile pour recalculer les stats si nécessaire
- */
-// userSchema.methods.recalculatePurchaseStats = async function() {
-//   try {
-//     const Order = mongoose.model('Order');
-
-//     const stats = await Order.aggregate([
-//       {
-//         $match: {
-//           user: this._id,
-//           paymentStatus: 'paid'
-//         }
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           totalOrders: { $sum: 1 },
-//           totalSpent: { $sum: '$totalAmount' },
-//           avgOrderValue: { $avg: '$totalAmount' },
-//           lastPurchaseAt: { $max: '$createdAt' }
-//         }
-//       }
-//     ]);
-
-//     if (stats.length > 0) {
-//       this.purchaseStats = {
-//         totalOrders: stats[0].totalOrders,
-//         totalSpent: stats[0].totalSpent,
-//         avgOrderValue: stats[0].avgOrderValue,
-//         lastPurchaseAt: stats[0].lastPurchaseAt
-//       };
-
-//       await this.save();
-//     }
-
-//     return this.purchaseStats;
-//   } catch (error) {
-//     logger.error('Error recalculating purchase stats', {
-//       userId: this._id,
-//       error: error.message
-//     });
-//     throw error;
-//   }
-// };
-
-// ========================================
-// 4. MÉTHODE STATIQUE POUR OBTENIR LES TOP CLIENTS
-// (ajouter après les autres méthodes statiques)
-// ========================================
-
-/**
- * Méthode statique pour obtenir les meilleurs clients
- */
-// userSchema.statics.getTopCustomers = async function(limit = 10) {
-//   try {
-//     return await this.find({
-//       role: 'user',
-//       'purchaseStats.totalOrders': { $gt: 0 }
-//     })
-//     .sort('-purchaseStats.totalSpent')
-//     .limit(limit)
-//     .select('name email phone purchaseStats createdAt');
-//   } catch (error) {
-//     logger.error('Error getting top customers', {
-//       error: error.message
-//     });
-//     return [];
-//   }
-// };
 
 // Gestion optimisée du modèle avec vérification pour éviter les redéfinitions
 const User = mongoose.models.User || mongoose.model('User', userSchema);

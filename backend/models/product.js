@@ -77,33 +77,6 @@ const productSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-
-    // Si vous voulez stocker des statistiques pré-calculées (optionnel mais recommandé)
-    // Ajouter ces champs dans le schéma productSchema :
-
-    // Dans la définition du schéma, ajouter :
-    // stats: {
-    //   totalRevenue: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //   },
-    //   lastSoldAt: {
-    //     type: Date,
-    //     default: null,
-    //   },
-    //   avgRating: {
-    //     type: Number,
-    //     default: 0,
-    //     min: 0,
-    //     max: 5,
-    //   },
-    //   monthlyRevenue: {
-    //     type: Map,
-    //     of: Number,
-    //     default: new Map(),
-    //   },
-    // },
   },
   {
     timestamps: true,
@@ -120,10 +93,6 @@ productSchema.index({ category: 1, price: 1 });
 
 // Si vous filtrez souvent par nom, catégorie ET prix en même temps
 productSchema.index({ name: 'text', category: 1, price: 1 });
-
-// Index pour optimiser les requêtes de statistiques de ventes
-productSchema.index({ sold: -1, createdAt: -1 });
-productSchema.index({ category: 1, sold: -1 });
 
 // Middleware pre-save pour mettre à jour le champ updatedAt
 productSchema.pre('save', function (next) {
@@ -156,21 +125,6 @@ productSchema.statics.findSimilarProductsLite = function (
     .limit(limit)
     .lean();
 };
-
-// Méthode pour mettre à jour les stats du produit (optionnel)
-// productSchema.methods.updateStats = async function (orderData) {
-//   this.stats.totalRevenue += orderData.revenue || 0;
-//   this.stats.lastSoldAt = new Date();
-
-//   const monthKey = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
-//   const currentMonthRevenue = this.stats.monthlyRevenue.get(monthKey) || 0;
-//   this.stats.monthlyRevenue.set(
-//     monthKey,
-//     currentMonthRevenue + (orderData.revenue || 0),
-//   );
-
-//   await this.save();
-// };
 
 // Assurer que les modèles ne sont pas redéfinis en cas de hot-reload
 const Product =
