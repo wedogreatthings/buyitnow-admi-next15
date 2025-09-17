@@ -210,6 +210,10 @@ const orderSchema = new mongoose.Schema(
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ orderNumber: 1, orderStatus: 1, paymentStatus: 1 });
 orderSchema.index({ createdAt: -1 });
+// Ajouter ces index après les index existants
+orderSchema.index({ createdAt: 1, paymentStatus: 1 });
+orderSchema.index({ createdAt: 1, orderStatus: 1 });
+orderSchema.index({ paymentStatus: 1, orderStatus: 1, createdAt: -1 });
 
 // Créer un identifiant unique au format ORD-YYYYMMDD-XXXXX
 orderSchema.pre('save', async function (next) {

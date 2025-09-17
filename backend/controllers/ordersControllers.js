@@ -4,10 +4,12 @@ import Address from '../models/address';
 import Product from '../models/product';
 import APIFilters from '../utils/APIFilters';
 import {
-  listOrdersPaidorUnapidThisMonthPipeline,
-  totalOrdersPaidOrUnpaidForThisMonthPipeline,
-  totalOrdersPerShippementStatusThisMonthPipeline,
-  totalOrdersThisMonthPipeline,
+  getMonthlyOrdersAnalytics,
+  getOrderStats,
+  // listOrdersPaidorUnapidThisMonthPipeline,
+  // totalOrdersPaidOrUnpaidForThisMonthPipeline,
+  // totalOrdersPerShippementStatusThisMonthPipeline,
+  // totalOrdersThisMonthPipeline,
 } from '../pipelines/orderPipelines';
 import {
   descListProductSoldThisMonthPipeline,
@@ -18,9 +20,9 @@ import { userThatBoughtMostSinceBeginningPipeline } from '../pipelines/userPipel
 import DeliveryPrice from '../models/deliveryPrice';
 import ErrorHandler from '../utils/errorHandler';
 
+// MÉTHODE getOrders OPTIMISÉE
 export const getOrders = async (req, res) => {
   const resPerPage = 2;
-  // Total Number of Orders (Paid and Unpaid)
   const ordersCount = await Order.countDocuments();
 
   let orders;
@@ -53,69 +55,31 @@ export const getOrders = async (req, res) => {
     totalPages = Number.isInteger(result) ? result : Math.ceil(result);
   }
 
-  /////////************ ************/////////
-
-  ////////*** STATS AND PIPELINES ***////////
-
-  /////////************ ************/////////
-
-  // GETTING LAST MONTH INDEX, CURRENT MONTH and CURRENT YEAR
+  // NOUVELLE IMPLÉMENTATION : Une seule requête pour toutes les stats
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
 
-  // Total Number of Client Registered this Month and this Year
-  const totalOrdersThisMonth = await totalOrdersThisMonthPipeline(
+  // Obtenir toutes les stats en une seule requête
+  const monthlyStats = await getMonthlyOrdersAnalytics(
     currentMonth,
     currentYear,
   );
 
-  // Total Number of Orders Delivered since the beginning
+  // Stats supplémentaires (depuis le début, pas seulement ce mois)
   const deliveredOrdersCount = await Order.countDocuments({
     paymentStatus: 'paid',
     orderStatus: 'Delivered',
   });
 
-  // Total Number of Orders Delivered This Month
-  const totalOrdersDeliveredThisMonth =
-    await totalOrdersPerShippementStatusThisMonthPipeline(
-      'Delivered',
-      'totalOrdersDelivered',
-      currentMonth,
-      currentYear,
-    );
-
-  // Total Orders Paid This Month
-  const totalOrdersPaidThisMonth =
-    await totalOrdersPaidOrUnpaidForThisMonthPipeline(
-      'paid',
-      'totalOrdersPaid',
-      currentMonth,
-      currentYear,
-    );
-
-  // Total Orders Unpaid This Month
-  const totalOrdersUnpaidThisMonth =
-    await totalOrdersPaidOrUnpaidForThisMonthPipeline(
-      'unpaid',
-      'totalOrdersUnpaid',
-      currentMonth,
-      currentYear,
-    );
-
-  // Descendant List of Product Sold Since The Beginning
+  // Import des autres pipelines nécessaires
   const descListProductSoldSinceBeginning =
     await descListProductSoldSinceBeginningPipeline();
-
-  // Descendant List of Category Sold Since The Beginning
   const descListCategorySoldSinceBeginning =
     await descListCategorySoldSinceBeginningPipeline();
-
   const descListProductSoldThisMonth =
     await descListProductSoldThisMonthPipeline(currentMonth, currentYear);
-
   const userThatBoughtMostSinceBeginning =
     await userThatBoughtMostSinceBeginningPipeline();
-
   const deliveryPrice = await DeliveryPrice.find();
 
   const overviewPattern = /overview/;
@@ -127,9 +91,14 @@ export const getOrders = async (req, res) => {
       descListProductSoldThisMonth,
       descListCategorySoldSinceBeginning,
       descListProductSoldSinceBeginning,
-      totalOrdersUnpaidThisMonth,
-      totalOrdersPaidThisMonth,
-      totalOrdersThisMonth,
+      // Utilisation des nouvelles stats
+      totalOrdersUnpaidThisMonth: [
+        { totalOrdersUnpaid: monthlyStats.totalOrdersUnpaid },
+      ],
+      totalOrdersPaidThisMonth: [
+        { totalOrdersPaid: monthlyStats.totalOrdersPaid },
+      ],
+      totalOrdersThisMonth: [{ totalOrders: monthlyStats.totalOrders }],
       ordersCount,
       totalPages,
       filteredOrdersCount,
@@ -138,9 +107,12 @@ export const getOrders = async (req, res) => {
   } else {
     res.status(200).json({
       deliveryPrice,
-      totalOrdersDeliveredThisMonth,
+      // Utilisation des nouvelles stats
+      totalOrdersDeliveredThisMonth: [
+        { totalOrdersDelivered: monthlyStats.totalOrdersDelivered },
+      ],
       deliveredOrdersCount,
-      totalOrdersThisMonth,
+      totalOrdersThisMonth: [{ totalOrders: monthlyStats.totalOrders }],
       totalPages,
       ordersCount,
       filteredOrdersCount,
@@ -273,92 +245,71 @@ export const updateOrder = async (req, res) => {
 //   });
 // };
 
+// MÉTHODE getOrdersPurchasedStats OPTIMISÉE
 export const getOrdersPurchasedStats = async (req, res) => {
-  // GETTING CURRENT MONTH and CURRENT YEAR
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
 
-  // Total Number of Orders Paid
-  const ordersPaidCount = await Order.countDocuments({ paymentStatus: 'paid' });
-
-  // Total Number of Orders Unpaid
-  const ordersUnpaidCount = await Order.countDocuments({
-    paymentStatus: 'unpaid',
-  });
-
-  // Total Number of Orders Processing since the beginning
-  const processingOrdersCount = await Order.countDocuments({
-    paymentStatus: 'paid',
-    orderStatus: 'Processing',
-  });
-
-  // Total Number of Orders Shipped since the beginning
-  const shippedOrdersCount = await Order.countDocuments({
-    paymentStatus: 'paid',
-    orderStatus: 'Shipped',
-  });
-
-  // Total Orders Paid This Month
-  const totalOrdersPaidThisMonth =
-    await totalOrdersPaidOrUnpaidForThisMonthPipeline(
-      'paid',
-      'totalOrdersPaid',
-      currentMonth,
-      currentYear,
-    );
-
-  // Total Orders Unpaid This Month
-  const totalOrdersUnpaidThisMonth =
-    await totalOrdersPaidOrUnpaidForThisMonthPipeline(
-      'unpaid',
-      'totalOrdersUnpaid',
-      currentMonth,
-      currentYear,
-    );
-
-  // Total Orders Delivery Processing
-  const totalOrdersProcessingThisMonth =
-    await totalOrdersPerShippementStatusThisMonthPipeline(
-      'Processing',
-      'totalOrdersProcessing',
-      currentMonth,
-      currentYear,
-    );
-
-  // Total Orders Delivery Shipped
-  const totalOrdersShippedThisMonth =
-    await totalOrdersPerShippementStatusThisMonthPipeline(
-      'Shipped',
-      'totalOrdersShipped',
-      currentMonth,
-      currentYear,
-    );
-
-  // List Of Orders Paid This Month
-  const listOrdersPaidThisMonth = await listOrdersPaidorUnapidThisMonthPipeline(
-    'paid',
-    currentMonth,
-    currentYear,
-  );
-
-  // List Of Orders Unpaid This Month
-  const listOrdersUnpaidThisMonth =
-    await listOrdersPaidorUnapidThisMonthPipeline(
-      'unpaid',
-      currentMonth,
-      currentYear,
-    );
-
-  res.status(200).json({
+  // Stats globales (depuis le début)
+  const [
     ordersPaidCount,
     ordersUnpaidCount,
     processingOrdersCount,
     shippedOrdersCount,
-    totalOrdersPaidThisMonth,
-    totalOrdersUnpaidThisMonth,
-    totalOrdersProcessingThisMonth,
-    totalOrdersShippedThisMonth,
-    listOrdersPaidThisMonth,
-    listOrdersUnpaidThisMonth,
+  ] = await Promise.all([
+    Order.countDocuments({ paymentStatus: 'paid' }),
+    Order.countDocuments({ paymentStatus: 'unpaid' }),
+    Order.countDocuments({ paymentStatus: 'paid', orderStatus: 'Processing' }),
+    Order.countDocuments({ paymentStatus: 'paid', orderStatus: 'Shipped' }),
+  ]);
+
+  // Obtenir toutes les stats mensuelles en une seule requête
+  const monthlyStats = await getMonthlyOrdersAnalytics(
+    currentMonth,
+    currentYear,
+  );
+
+  res.status(200).json({
+    // Stats globales
+    ordersPaidCount,
+    ordersUnpaidCount,
+    processingOrdersCount,
+    shippedOrdersCount,
+
+    // Stats mensuelles (formatées pour compatibilité)
+    totalOrdersPaidThisMonth: [
+      { totalOrdersPaid: monthlyStats.totalOrdersPaid },
+    ],
+    totalOrdersUnpaidThisMonth: [
+      { totalOrdersUnpaid: monthlyStats.totalOrdersUnpaid },
+    ],
+    totalOrdersProcessingThisMonth: [
+      { totalOrdersProcessing: monthlyStats.totalOrdersProcessing },
+    ],
+    totalOrdersShippedThisMonth: [
+      { totalOrdersShipped: monthlyStats.totalOrdersShipped },
+    ],
+
+    // Listes
+    listOrdersPaidThisMonth: monthlyStats.listOrdersPaidThisMonth,
+    listOrdersUnpaidThisMonth: monthlyStats.listOrdersUnpaidThisMonth,
   });
+};
+
+// NOUVELLE MÉTHODE BONUS : Endpoint pour des stats personnalisées
+export const getCustomOrderStats = async (req, res) => {
+  try {
+    const { filters } = req.body;
+    const stats = await getOrderStats(filters);
+
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
