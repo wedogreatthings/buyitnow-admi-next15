@@ -5,10 +5,7 @@ import { cloudinary, uploads } from '../utils/cloudinary';
 import fs from 'fs';
 import ErrorHandler from '../utils/errorHandler';
 import {
-  descListCategorySoldSinceBeginningPipeline,
-  descListCategorySoldThisMonthPipeline,
-  descListProductSoldSinceBeginningPipeline,
-  descListProductSoldThisMonthPipeline,
+  getProductSalesAnalytics,
   orderIDsForProductPipeline,
   revenuesGeneratedPerProduct,
 } from '../pipelines/productPipelines';
@@ -219,29 +216,46 @@ export const deleteProduct = async (req, res, next) => {
   }
 };
 
+// Remplacer la méthode getProductSales par :
 export const getProductSales = async (req, res) => {
-  // GETTING LAST MONTH INDEX, CURRENT MONTH and CURRENT YEAR
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
+  try {
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
 
-  // Descendant List of Product Sold Since The Beginning
-  const descListProductSoldSinceBeginning =
-    await descListProductSoldSinceBeginningPipeline();
+    // Une seule requête pour toutes les stats du mois
+    const monthlyAnalytics = await getProductSalesAnalytics(
+      currentMonth,
+      currentYear,
+    );
 
-  // Descendant List of Category Sold Since The Beginning
-  const descListCategorySoldSinceBeginning =
-    await descListCategorySoldSinceBeginningPipeline();
+    // Une seule requête pour toutes les stats globales
+    const globalAnalytics = await getProductSalesAnalytics();
 
-  const descListProductSoldThisMonth =
-    await descListProductSoldThisMonthPipeline(currentMonth, currentYear);
+    res.status(200).json({
+      // Stats globales (depuis le début)
+      descListProductSoldSinceBeginning: globalAnalytics.productStats,
+      descListCategorySoldSinceBeginning: globalAnalytics.categoryStats,
 
-  const descListCategorySoldThisMonth =
-    await descListCategorySoldThisMonthPipeline(currentMonth, currentYear);
+      // Stats du mois
+      descListProductSoldThisMonth: monthlyAnalytics.productStats,
+      descListCategorySoldThisMonth: monthlyAnalytics.categoryStats,
 
-  res.status(200).json({
-    descListProductSoldSinceBeginning,
-    descListCategorySoldSinceBeginning,
-    descListProductSoldThisMonth,
-    descListCategorySoldThisMonth,
-  });
+      // Nouvelles métriques bonus
+      totalProductsSold: globalAnalytics.productStats.reduce(
+        (acc, p) => acc + p.totalQuantity,
+        0,
+      ),
+      totalRevenue: globalAnalytics.productStats.reduce(
+        (acc, p) => acc + p.totalAmount,
+        0,
+      ),
+      topSellingCategory: globalAnalytics.categoryStats[0] || null,
+    });
+  } catch (error) {
+    console.error('Error in getProductSales:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
