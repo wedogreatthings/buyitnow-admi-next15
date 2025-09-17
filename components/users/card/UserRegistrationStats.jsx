@@ -33,7 +33,7 @@ const UserRegistrationStats = ({
     {
       title: 'New Last Month',
       content: `${arrayHasData(totalUsersRegisteredLastMonth) ? ' 0 user' : `${totalUsersRegisteredLastMonth[0]?.totalUsers} user(s)`}`,
-      indication: `${lastMonth === 0 && '12'}/${currentYear}`,
+      indication: `${lastMonth === 0 ? '12' : lastMonth}/${currentYear}`,
       color: 'red',
     },
   ];
