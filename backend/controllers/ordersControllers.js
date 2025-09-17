@@ -293,19 +293,19 @@ export const getOrdersPurchasedStats = async (req, res) => {
 };
 
 // NOUVELLE MÉTHODE BONUS : Endpoint pour des stats personnalisées
-export const getCustomOrderStats = async (req, res) => {
-  try {
-    const { filters } = req.body;
-    const stats = await getOrderStats(filters);
+// export const getCustomOrderStats = async (req, res) => {
+//   try {
+//     const { filters } = req.body;
+//     const stats = await getOrderStats(filters);
 
-    res.status(200).json({
-      success: true,
-      data: stats,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};
+//     res.status(200).json({
+//       success: true,
+//       data: stats,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       error: error.message,
+//     });
+//   }
+// };
