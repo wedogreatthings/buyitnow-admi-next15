@@ -6,10 +6,6 @@ import APIFilters from '../utils/APIFilters';
 import {
   getMonthlyOrdersAnalytics,
   getOrderStats,
-  // listOrdersPaidorUnapidThisMonthPipeline,
-  // totalOrdersPaidOrUnpaidForThisMonthPipeline,
-  // totalOrdersPerShippementStatusThisMonthPipeline,
-  // totalOrdersThisMonthPipeline,
 } from '../pipelines/orderPipelines';
 import {
   descListProductSoldThisMonthPipeline,

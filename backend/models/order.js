@@ -209,7 +209,39 @@ const orderSchema = new mongoose.Schema(
 // Indexer pour les requêtes fréquentes
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ orderNumber: 1, orderStatus: 1, paymentStatus: 1 });
+
+// Index pour optimiser les requêtes utilisateurs
+orderSchema.index({ user: 1, paymentStatus: 1, createdAt: -1 });
+orderSchema.index({ user: 1, totalAmount: -1 });
+orderSchema.index({ paymentStatus: 1, user: 1 });
+
+// Index composé pour les agrégations fréquentes
+orderSchema.index({
+  paymentStatus: 1,
+  createdAt: -1,
+  user: 1,
+  totalAmount: -1,
+});
+
 orderSchema.index({ createdAt: -1 });
+
+// Index composés pour les requêtes de statistiques produits
+orderSchema.index({ 'orderItems.product': 1, paymentStatus: 1, createdAt: -1 });
+orderSchema.index({
+  'orderItems.category': 1,
+  paymentStatus: 1,
+  createdAt: -1,
+});
+
+// Index pour optimiser les requêtes avec paymentStatus et dates
+orderSchema.index({ paymentStatus: 1, createdAt: -1 });
+
+// Index pour les requêtes fréquentes sur orderItems
+orderSchema.index({ 'orderItems.product': 1 });
+
+// Si vous avez beaucoup de requêtes sur les totaux
+orderSchema.index({ paymentStatus: 1, totalAmount: -1 });
+
 // Ajouter ces index après les index existants
 orderSchema.index({ createdAt: 1, paymentStatus: 1 });
 orderSchema.index({ createdAt: 1, orderStatus: 1 });
@@ -442,6 +474,37 @@ orderSchema.pre('find', function () {
 orderSchema.virtual('itemCount').get(function () {
   return this.orderItems.reduce((total, item) => total + item.quantity, 0);
 });
+
+// Mettre à jour les stats utilisateur après une commande payée
+// orderSchema.post('save', async function() {
+//   try {
+//     // Seulement si c'est une nouvelle commande payée
+//     if (this.isNew && this.paymentStatus === 'paid') {
+//       const User = mongoose.model('User');
+//       const user = await User.findById(this.user);
+
+//       if (user && typeof user.updatePurchaseStats === 'function') {
+//         // Calculer la catégorie favorite (optionnel)
+//         const categoryCount = {};
+//         this.orderItems.forEach(item => {
+//           categoryCount[item.category] = (categoryCount[item.category] || 0) + 1;
+//         });
+
+//         const favoriteCategory = Object.keys(categoryCount).reduce((a, b) =>
+//           categoryCount[a] > categoryCount[b] ? a : b
+//         );
+
+//         await user.updatePurchaseStats({
+//           totalAmount: this.totalAmount,
+//           favoriteCategory
+//         });
+//       }
+//     }
+//   } catch (error) {
+//     // Ne pas bloquer la sauvegarde de la commande en cas d'erreur
+//     console.error('Error updating user stats after order:', error);
+//   }
+// });
 
 // Gestion optimisée du modèle avec vérification pour éviter les redéfinitions
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
