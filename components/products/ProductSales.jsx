@@ -22,6 +22,8 @@ import { arrayHasData } from '@/helpers/helpers';
 const ProductSales = ({ data }) => {
   const [open, setOpen] = useState(false);
 
+  console.log('ProductSales data:', data);
+
   const totalAmout = arrayHasData(data?.descListProductSoldThisMonth)
     ? 0
     : data?.descListProductSoldThisMonth?.reduce(
