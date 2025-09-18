@@ -240,8 +240,8 @@ export const updateOrder = async (req, res) => {
 
       // Si on passe de 'paid' à 'refunded' : annuler les ventes et restaurer le stock
       else if (
-        (currentStatus === 'paid' && newStatus === 'refunded') ||
-        newStatus === 'cancelled'
+        currentStatus === 'paid' &&
+        (newStatus === 'refunded' || newStatus === 'cancelled')
       ) {
         // Récupérer les produits avec leurs catégories
         const productIds = order.orderItems.map((item) => item.product);
