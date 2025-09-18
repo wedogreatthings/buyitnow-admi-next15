@@ -125,46 +125,20 @@ export const getMonthlyOrdersAnalytics = async (month, year) => {
             },
           ],
 
-          // Les 20 dernières commandes payées
+          // Les 20 dernières commandes payées COMPLÈTES
           recentPaidOrders: [
             { $match: { paymentStatus: 'paid' } },
             { $sort: { createdAt: -1 } },
             { $limit: 20 },
-            {
-              $project: {
-                orderNumber: 1,
-                totalAmount: 1,
-                orderStatus: 1,
-                createdAt: 1,
-                user: 1,
-                orderItems: 1, // AJOUTÉ
-                paymentInfo: 1, // AJOUTÉ
-                shippingInfo: 1, // AJOUTÉ
-                shippingAmount: 1, // AJOUTÉ
-                taxAmount: 1, // AJOUTÉ
-              },
-            },
+            // Pas de $project = document complet avec paidAt
           ],
 
-          // Les 20 dernières commandes impayées
+          // Les 20 dernières commandes impayées COMPLÈTES
           recentUnpaidOrders: [
             { $match: { paymentStatus: 'unpaid' } },
             { $sort: { createdAt: -1 } },
             { $limit: 20 },
-            {
-              $project: {
-                orderNumber: 1,
-                totalAmount: 1,
-                orderStatus: 1,
-                createdAt: 1,
-                user: 1,
-                orderItems: 1, // AJOUTÉ
-                paymentInfo: 1, // AJOUTÉ
-                shippingInfo: 1, // AJOUTÉ
-                shippingAmount: 1, // AJOUTÉ
-                taxAmount: 1, // AJOUTÉ
-              },
-            },
+            // Pas de $project = document complet
           ],
         },
       },
