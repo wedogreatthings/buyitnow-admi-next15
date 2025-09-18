@@ -137,6 +137,11 @@ export const getMonthlyOrdersAnalytics = async (month, year) => {
                 orderStatus: 1,
                 createdAt: 1,
                 user: 1,
+                orderItems: 1, // AJOUTÉ
+                paymentInfo: 1, // AJOUTÉ
+                shippingInfo: 1, // AJOUTÉ
+                shippingAmount: 1, // AJOUTÉ
+                taxAmount: 1, // AJOUTÉ
               },
             },
           ],
@@ -153,6 +158,11 @@ export const getMonthlyOrdersAnalytics = async (month, year) => {
                 orderStatus: 1,
                 createdAt: 1,
                 user: 1,
+                orderItems: 1, // AJOUTÉ
+                paymentInfo: 1, // AJOUTÉ
+                shippingInfo: 1, // AJOUTÉ
+                shippingAmount: 1, // AJOUTÉ
+                taxAmount: 1, // AJOUTÉ
               },
             },
           ],
