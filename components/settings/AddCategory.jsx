@@ -8,6 +8,7 @@ const AddCategory = () => {
   const { newCategory, error, clearErrors } = useContext(SettingsContext);
 
   const [category, setCategory] = useState('');
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -20,7 +21,12 @@ const AddCategory = () => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    newCategory(category);
+    const categoryData = {
+      categoryName: category,
+      isActive: isActive,
+    };
+
+    newCategory(categoryData);
   };
 
   return (
@@ -49,6 +55,25 @@ const AddCategory = () => {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           />
+        </div>
+
+        <div className="mb-4 w-1/2">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+              className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <span className="text-sm font-medium text-gray-900">
+              Activate category immediately
+            </span>
+          </label>
+          <p className="text-xs text-gray-500 mt-1">
+            {isActive
+              ? 'Category will be active and visible to customers'
+              : 'Category will be inactive and hidden from customers'}
+          </p>
         </div>
 
         <button

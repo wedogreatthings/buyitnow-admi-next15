@@ -54,22 +54,30 @@ export const SettingsProvider = ({ children }) => {
     }
   };
 
-  const newCategory = async (categoryName) => {
+  // MISE À JOUR : Accepter maintenant un objet avec categoryName et isActive
+  const newCategory = async (categoryData) => {
     try {
       setLoading(true);
 
+      // Gérer le cas où on reçoit juste une string (compatibilité descendante)
+      const requestData =
+        typeof categoryData === 'string'
+          ? { categoryName: categoryData, isActive: false }
+          : categoryData;
+
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/category`,
-        { categoryName },
+        requestData,
       );
 
-      if (data) {
+      if (data?.success) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Category added successfully');
         setLoading(false);
       }
     } catch (error) {
-      setError(error?.response?.data?.message);
+      setError(error?.response?.data?.error || error?.response?.data?.message);
     }
   };
 

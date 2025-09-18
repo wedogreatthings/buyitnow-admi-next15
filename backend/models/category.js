@@ -51,7 +51,7 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Index pour la recherche textuelle
-// categorySchema.index({ categoryName: 'text' });
+categorySchema.index({ categoryName: 'text' });
 
 // Virtual pour récupérer les produits dans cette catégorie
 // categorySchema.virtual('products', {

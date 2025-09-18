@@ -90,16 +90,24 @@ export const newCategory = async (req, res) => {
   const totalCategory = await Category.countDocuments();
 
   if (totalCategory < 6) {
-    const categoryAdded = await Category.create(req.body);
+    // Créer la catégorie avec les données envoyées (incluant isActive)
+    const categoryData = {
+      categoryName: req.body.categoryName,
+      isActive: req.body.isActive || false, // Par défaut false si non spécifié
+    };
+
+    const categoryAdded = await Category.create(categoryData);
 
     res.status(201).json({
+      success: true,
       categoryAdded,
     });
   } else {
     const error =
-      'You have reached the maximum limit, 5, of category. To add another category, delete one.';
+      'You have reached the maximum limit, 6, of category. To add another category, delete one.';
 
     res.status(401).json({
+      success: false,
       error,
     });
   }
