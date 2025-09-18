@@ -105,12 +105,46 @@ export const newCategory = async (req, res) => {
   }
 };
 
+// Modifier la méthode getCategories existante
 export const getCategories = async (req, res) => {
-  const categories = await Category.find();
+  // Récupérer toutes les catégories triées par statut (actives d'abord)
+  const categories = await Category.find().sort({
+    isActive: -1,
+    categoryName: 1,
+  });
 
   res.status(200).json({
     categories,
   });
+};
+
+export const toggleCategoryStatus = async (req, res) => {
+  try {
+    const category = await Category.findById(req.query.id);
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: 'Category not found.',
+      });
+    }
+
+    // Basculer le statut isActive
+    category.isActive = !category.isActive;
+    await category.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Category ${category.isActive ? 'activated' : 'deactivated'} successfully`,
+      category,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
+    });
+  }
 };
 
 export const deleteCategory = async (req, res) => {

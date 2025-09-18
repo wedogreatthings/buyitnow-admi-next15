@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const SettingsContext = createContext();
 
@@ -52,22 +53,70 @@ export const SettingsProvider = ({ children }) => {
     }
   };
 
-  const newCategory = async (categoryName) => {
+  // MISE À JOUR : Accepter maintenant un objet avec categoryName et isActive
+  const newCategory = async (categoryData) => {
     try {
       setLoading(true);
 
+      // Gérer le cas où on reçoit juste une string (compatibilité descendante)
+      const requestData =
+        typeof categoryData === 'string'
+          ? { categoryName: categoryData, isActive: false }
+          : categoryData;
+
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/category`,
-        { categoryName },
+        requestData,
       );
 
-      if (data) {
+      if (data?.success) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Category added successfully');
         setLoading(false);
       }
     } catch (error) {
-      setError(error?.response?.data?.message);
+      setError(error?.response?.data?.error || error?.response?.data?.message);
+    }
+  };
+
+  // NOUVELLE MÉTHODE : Basculer le statut isActive d'une catégorie
+  const toggleCategoryStatus = async (categoryId) => {
+    try {
+      setLoading(true);
+
+      const { data } = await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/settings/category/toggle-status/${categoryId}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (data.success) {
+        // Mettre à jour la liste des catégories localement
+        setCategories((prevCategories) =>
+          prevCategories.map((category) =>
+            category._id === categoryId
+              ? { ...category, isActive: !category.isActive }
+              : category,
+          ),
+        );
+
+        toast.success(data.message);
+        router.refresh();
+      }
+    } catch (error) {
+      setError(
+        error?.response?.data?.message || 'Failed to update category status',
+      );
+      toast.error(
+        error?.response?.data?.message || 'Failed to update category status',
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,9 +129,13 @@ export const SettingsProvider = ({ children }) => {
       if (data?.success) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Delivery price deleted successfully');
       }
     } catch (error) {
       setError(error?.response?.data?.message);
+      toast.error(
+        error?.response?.data?.message || 'Failed to delete delivery price',
+      );
     }
   };
 
@@ -95,9 +148,17 @@ export const SettingsProvider = ({ children }) => {
       if (data?.success) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Category deleted successfully');
+      } else if (data?.error) {
+        // Gérer le cas où la catégorie a des produits associés
+        setError(data.error);
+        toast.error(data.error);
       }
     } catch (error) {
       setError(error?.response?.data?.message);
+      toast.error(
+        error?.response?.data?.message || 'Failed to delete category',
+      );
     }
   };
 
@@ -110,9 +171,13 @@ export const SettingsProvider = ({ children }) => {
       if (data?.success) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Payment type deleted successfully');
       }
     } catch (error) {
       setError(error?.response?.data?.message);
+      toast.error(
+        error?.response?.data?.message || 'Failed to delete payment type',
+      );
     }
   };
 
@@ -132,6 +197,7 @@ export const SettingsProvider = ({ children }) => {
         newDeliveryPrice,
         newPaymentType,
         newCategory,
+        toggleCategoryStatus, // NOUVELLE MÉTHODE AJOUTÉE
         deleteDeliveryPrice,
         deleteCategory,
         deletePayment,
