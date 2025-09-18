@@ -3,16 +3,9 @@ import Order from '../models/order';
 import Address from '../models/address';
 import Product from '../models/product';
 import APIFilters from '../utils/APIFilters';
-import {
-  getMonthlyOrdersAnalytics,
-  getOrderStats,
-} from '../pipelines/orderPipelines';
-import {
-  descListProductSoldThisMonthPipeline,
-  descListCategorySoldSinceBeginningPipeline,
-  descListProductSoldSinceBeginningPipeline,
-} from '../pipelines/productPipelines';
-import { userThatBoughtMostSinceBeginningPipeline } from '../pipelines/userPipelines';
+import { getMonthlyOrdersAnalytics } from '../pipelines/orderPipelines';
+import { getProductSalesAnalytics } from '../pipelines/productPipelines';
+import { getUserAnalytics } from '../pipelines/userPipelines';
 import DeliveryPrice from '../models/deliveryPrice';
 import ErrorHandler from '../utils/errorHandler';
 
@@ -67,15 +60,27 @@ export const getOrders = async (req, res) => {
     orderStatus: 'Delivered',
   });
 
-  // Import des autres pipelines nécessaires
-  const descListProductSoldSinceBeginning =
-    await descListProductSoldSinceBeginningPipeline();
-  const descListCategorySoldSinceBeginning =
-    await descListCategorySoldSinceBeginningPipeline();
-  const descListProductSoldThisMonth =
-    await descListProductSoldThisMonthPipeline(currentMonth, currentYear);
-  const userThatBoughtMostSinceBeginning =
-    await userThatBoughtMostSinceBeginningPipeline();
+  const [globalProductStats, monthlyProductStats, globalUserStats] =
+    await Promise.all([
+      getProductSalesAnalytics(), // Stats globales produits
+      getProductSalesAnalytics(currentMonth, currentYear), // Stats mensuelles produits
+      getUserAnalytics(), // Stats globales users
+    ]);
+
+  // Puis extraire les données
+  const descListProductSoldSinceBeginning = globalProductStats.productStats;
+  const descListCategorySoldSinceBeginning = globalProductStats.categoryStats;
+  const descListProductSoldThisMonth = monthlyProductStats.productStats;
+  const userThatBoughtMostSinceBeginning = globalUserStats.topBuyers[0]
+    ? [
+        {
+          _id: globalUserStats.topBuyers[0]._id,
+          totalPurchases: globalUserStats.topBuyers[0].totalOrders,
+          result: [globalUserStats.topBuyers[0].result],
+        },
+      ]
+    : [];
+
   const deliveryPrice = await DeliveryPrice.find();
 
   const overviewPattern = /overview/;
