@@ -97,7 +97,7 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
         </Link>
       </div>
 
-      <div className="flex gap-1 pb-4">
+      <div className="flex gap-1 pb-4 flex-wrap">
         {arrayHasData(dataCategory?.categories) ? (
           <div className="w-full">
             <p className="font-bold text-xl text-center">No Categories found</p>
@@ -106,17 +106,24 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
           dataCategory?.categories.map((category, index) => (
             <div
               key={category?._id}
-              className={`relative w-30 p-8 rounded-sm ml-6 justify-center items-center ${colors[index]}`}
+              className={`relative min-w-32 p-4 rounded-sm ml-6 justify-center items-center ${colors[index % colors.length]}`}
             >
               <div
-                className="absolute top-0 right-1.5 cursor-pointer"
+                className="absolute top-1 right-2 cursor-pointer text-white hover:text-red-200"
                 onClick={() => deleteCategoryHandler(category?._id)}
               >
                 <i className="fa fa-xmark" aria-hidden="true"></i>
               </div>
-              <span className="text-white font-bold text-sm">
-                {category?.categoryName}
-              </span>
+              <div className="text-center">
+                <span className="text-white font-bold text-sm block mb-2">
+                  {category?.categoryName}
+                </span>
+                <div className="bg-black bg-opacity-30 rounded px-2 py-1">
+                  <span className="text-white text-xs font-semibold">
+                    Sold: {category?.sold || 0}
+                  </span>
+                </div>
+              </div>
             </div>
           ))
         )}
