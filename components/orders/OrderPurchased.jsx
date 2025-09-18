@@ -27,6 +27,8 @@ const OrderPurchased = ({ data }) => {
   const { deliveryPrice } = useContext(SettingsContext);
   const [open, setOpen] = useState(false);
 
+  console.log('OrderPurchased data:', data);
+
   // Calcul des montants totaux avec totalAmount au lieu de amountPaid
   const totalAmountUnpaid = arrayHasData(data?.listOrdersUnpaidThisMonth)
     ? 0
