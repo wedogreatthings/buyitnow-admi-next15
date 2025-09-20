@@ -146,19 +146,6 @@ export const removeProductImage = async (req, res, next) => {
       return next(new ErrorHandler('Product not found.', 404));
     }
 
-    const cartContainingThisProduct = await Cart.countDocuments({
-      product: product?._id,
-    });
-
-    if (cartContainingThisProduct > 0) {
-      return next(
-        new ErrorHandler(
-          'Cannot delete images of this product. It is present in one or more carts.',
-          400,
-        ),
-      );
-    }
-
     // Find the image to remove
     const imageToRemove = product.images.find(
       (img) => img._id.toString() === imageId,
@@ -195,10 +182,36 @@ export const updateProduct = async (req, res, next) => {
     return next(new ErrorHandler('Product not found.', 404));
   }
 
-  product = await Product.findByIdAndUpdate(req.query.id, req.body);
+  // Pseudo-code de la logique
+  let warningMessage = null;
 
+  // 1. Vérifier si on veut activer le produit
+  if (req.body.isActive === true) {
+    // 2. Récupérer le produit avec sa catégorie
+    const productWithCategory = await Product.findById(req.query.id).populate(
+      'category',
+    );
+
+    // 3. Vérifier si la catégorie est inactive
+    if (!productWithCategory.category.isActive) {
+      // 4. Supprimer isActive de la mise à jour
+      delete req.body.isActive;
+
+      // 5. Préparer le message d'avertissement
+      warningMessage = `Product updated successfully, but cannot be activated because the category "${productWithCategory.category.categoryName}" is inactive. Activate the category first.`;
+    }
+  }
+
+  // 6. Continuer avec la mise à jour normale
+  product = await Product.findByIdAndUpdate(req.query.id, req.body, {
+    new: true,
+  });
+
+  // 7. Réponse avec message conditionnel
   res.status(200).json({
+    success: true,
     product,
+    warning: warningMessage, // null si pas d'avertissement
   });
 };
 
@@ -217,6 +230,15 @@ export const deleteProduct = async (req, res, next) => {
     return next(
       new ErrorHandler(
         'Cannot delete product. It is present in one or more carts.',
+        400,
+      ),
+    );
+  }
+
+  if (product.isActive) {
+    return next(
+      new ErrorHandler(
+        'You cannot delete an active product. Please deactivate it first.',
         400,
       ),
     );

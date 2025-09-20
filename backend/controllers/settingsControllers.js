@@ -155,11 +155,20 @@ export const toggleCategoryStatus = async (req, res) => {
   }
 };
 
-export const deleteCategory = async (req, res) => {
+export const deleteCategory = async (req, res, next) => {
   const deletingCategory = await Category.findById(req.query.id);
 
   if (!deletingCategory) {
     return new ErrorHandler('Category not found.', 404);
+  }
+
+  if (deletingCategory.isActive) {
+    return next(
+      new ErrorHandler(
+        'You cannot delete an active category. Please deactivate it first.',
+        400,
+      ),
+    );
   }
 
   const productsWithThatCategory = await Product.countDocuments({
@@ -167,10 +176,12 @@ export const deleteCategory = async (req, res) => {
   });
 
   if (productsWithThatCategory > 0) {
-    res.json({
-      error:
-        'There are products related to this category! If you want to delete it, delete first all the products related to that category.',
-    });
+    return next(
+      new ErrorHandler(
+        'You cannot delete this category because there are products associated with it.',
+        400,
+      ),
+    );
   } else {
     await deletingCategory.deleteOne();
 
