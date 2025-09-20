@@ -26,6 +26,8 @@ const UserProfile = ({ data }) => {
 
       <hr className="my-2 mx-9" />
 
+      {console.log('Orders in UserProfile Comp', data?.orders)}
+
       <OrdersPage orders={data?.orders} />
     </div>
   );
