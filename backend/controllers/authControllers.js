@@ -1,4 +1,5 @@
 import User from '../models/user';
+import Cart from '../models/cart';
 import ErrorHandler from '../utils/errorHandler';
 import APIFilters from '../utils/APIFilters';
 import {
@@ -117,6 +118,16 @@ export const deleteUser = async (req, res, next) => {
 
   if (!user) {
     return next(new ErrorHandler('No User found', 404));
+  }
+
+  const cartContainingThisProduct = await Cart.countDocuments({
+    user: user?._id,
+  });
+
+  if (cartContainingThisProduct > 0) {
+    return next(
+      new ErrorHandler('Cannot delete user. It has one or more carts.', 400),
+    );
   }
 
   await user.deleteOne();
