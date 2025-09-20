@@ -307,7 +307,7 @@ orderSchema.pre('save', function (next) {
     this.isModified('shippingAmount') ||
     this.isModified('taxAmount')
   ) {
-    const itemsTotal = this.orderItems.reduce(
+    const itemsTotal = (this.orderItems || []).reduce(
       (sum, item) => sum + (item.subtotal || item.price * item.quantity),
       0,
     );
@@ -471,6 +471,9 @@ orderSchema.pre('find', function () {
 
 // Virtualiser le nombre d'articles
 orderSchema.virtual('itemCount').get(function () {
+  if (!this.orderItems || !Array.isArray(this.orderItems)) {
+    return 0;
+  }
   return this.orderItems.reduce((total, item) => total + item.quantity, 0);
 });
 
