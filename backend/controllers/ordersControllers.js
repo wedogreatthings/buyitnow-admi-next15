@@ -5,8 +5,12 @@ import Product from '../models/product';
 import Category from '../models/category';
 import APIFilters from '../utils/APIFilters';
 import { getMonthlyOrdersAnalytics } from '../pipelines/orderPipelines';
-import { getProductSalesAnalytics } from '../pipelines/productPipelines';
-import { getUserAnalytics } from '../pipelines/userPipelines';
+import {
+  descListCategorySoldSinceBeginningPipeline,
+  descListProductSoldSinceBeginningPipeline,
+  descListProductSoldThisMonthPipeline,
+} from '../pipelines/productPipelines';
+import { userThatBoughtMostSinceBeginningPipeline } from '../pipelines/userPipelines';
 import DeliveryPrice from '../models/deliveryPrice';
 import ErrorHandler from '../utils/errorHandler';
 
@@ -61,26 +65,19 @@ export const getOrders = async (req, res) => {
     orderStatus: 'Delivered',
   });
 
-  const [globalProductStats, monthlyProductStats, globalUserStats] =
-    await Promise.all([
-      getProductSalesAnalytics(), // Stats globales produits
-      getProductSalesAnalytics(currentMonth, currentYear), // Stats mensuelles produits
-      getUserAnalytics(), // Stats globales users
-    ]);
+  // Descendant List of Product Sold Since The Beginning
+  const descListProductSoldSinceBeginning =
+    await descListProductSoldSinceBeginningPipeline();
 
-  // Puis extraire les données
-  const descListProductSoldSinceBeginning = globalProductStats.productStats;
-  const descListCategorySoldSinceBeginning = globalProductStats.categoryStats;
-  const descListProductSoldThisMonth = monthlyProductStats.productStats;
-  const userThatBoughtMostSinceBeginning = globalUserStats.topBuyers[0]
-    ? [
-        {
-          _id: globalUserStats.topBuyers[0]._id,
-          totalPurchases: globalUserStats.topBuyers[0].totalOrders,
-          result: [globalUserStats.topBuyers[0].result],
-        },
-      ]
-    : [];
+  // Descendant List of Category Sold Since The Beginning
+  const descListCategorySoldSinceBeginning =
+    await descListCategorySoldSinceBeginningPipeline();
+
+  const descListProductSoldThisMonth =
+    await descListProductSoldThisMonthPipeline(currentMonth, currentYear);
+
+  const userThatBoughtMostSinceBeginning =
+    await userThatBoughtMostSinceBeginningPipeline();
 
   const deliveryPrice = await DeliveryPrice.find();
 
