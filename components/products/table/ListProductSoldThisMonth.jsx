@@ -47,7 +47,9 @@ const ListProductSoldThisMonth = ({ productSoldThisMonth }) => {
               />
               {product?.productName?.[0] || 'N/A'}
             </td>
-            <td className="px-6 py-2">$ {product?.totalAmount || 0}</td>
+            <td className="px-6 py-2">
+              $ {product?.totalAmount?.toFixed(2) || 0}
+            </td>
             <td className="px-6 py-2">{product?.totalQuantity || 0}</td>
             <td className="px-6 py-2">
               {product?.productCategory?.[0] || 'N/A'}
