@@ -2,7 +2,6 @@ import User from '../models/user';
 import ErrorHandler from '../utils/errorHandler';
 import APIFilters from '../utils/APIFilters';
 import {
-  getUserAnalytics,
   totalUsersThatBoughtPipeline,
   totalUsersThatBoughtThisMonthPipeline,
   usersRegisteredPerMonthPipeline,
