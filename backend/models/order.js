@@ -172,15 +172,15 @@ const orderSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    paidAt: {
-      type: Date,
-    },
-    deliveredAt: {
-      type: Date,
-    },
-    cancelledAt: {
-      type: Date,
-    },
+    // paidAt: {
+    //   type: Date,
+    // },
+    // deliveredAt: {
+    //   type: Date,
+    // },
+    // cancelledAt: {
+    //   type: Date,
+    // },
   },
   {
     timestamps: {

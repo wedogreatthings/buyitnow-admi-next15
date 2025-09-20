@@ -14,7 +14,7 @@ const PaymentBox = ({ order }) => {
   // Définir les transitions autorisées
   const allowedTransitions = {
     unpaid: ['paid', 'cancelled'],
-    paid: ['refunded', 'cancelled'],
+    paid: ['refunded'],
     refunded: [], // Aucune transition autorisée
     cancelled: [], // Aucune transition autorisée
   };

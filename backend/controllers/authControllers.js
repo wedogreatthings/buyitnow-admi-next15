@@ -3,7 +3,11 @@ import ErrorHandler from '../utils/errorHandler';
 import APIFilters from '../utils/APIFilters';
 import {
   getUserAnalytics,
-  getUserRegistrationStats,
+  totalUsersThatBoughtPipeline,
+  totalUsersThatBoughtThisMonthPipeline,
+  usersRegisteredPerMonthPipeline,
+  usersThatBoughtMostThisMonthPipeline,
+  userThatBoughtMostSinceBeginningPipeline,
 } from '../pipelines/userPipelines';
 import Order from '../models/order';
 import mongoose from 'mongoose';
@@ -25,29 +29,42 @@ export const getUsers = async (req, res) => {
     const result = filteredUsers / resPerPage;
     const totalPages = Number.isInteger(result) ? result : Math.ceil(result);
 
-    // Dates pour les stats
+    /////////************ ************/////////
+
+    ////////*** STATS AND PIPELINES ***////////
+
+    /////////************ ************/////////
+
+    // GETTING LAST MONTH INDEX, CURRENT MONTH and CURRENT YEAR
     const lastMonth = new Date().getMonth();
     const currentMonth = lastMonth + 1;
     const currentYear = new Date().getFullYear();
 
-    // Une seule requête pour toutes les stats d'inscription
-    const [currentMonthStats, lastMonthStats, clientUsersCount] =
-      await Promise.all([
-        getUserRegistrationStats(currentMonth, currentYear),
-        getUserRegistrationStats(lastMonth, currentYear),
-        User.countDocuments({ role: 'user' }),
-      ]);
+    // Total Number of Client Users
+    const clientUsersCount = await User.countDocuments({ role: 'user' });
+
+    // Total Number of Client Registered this Month and this Year
+    const usersRegisteredThisMonth = await usersRegisteredPerMonthPipeline(
+      currentMonth,
+      currentYear,
+    );
+
+    // Total Number of Client Registered Last Month and this Year
+    const usersRegisteredLastMonth = await usersRegisteredPerMonthPipeline(
+      lastMonth,
+      currentYear,
+    );
 
     res.status(200).json({
-      usersRegisteredLastMonth: lastMonthStats.totalRegistrations,
-      usersRegisteredThisMonth: currentMonthStats.totalRegistrations,
+      usersRegisteredLastMonth,
+      usersRegisteredThisMonth,
       clientUsersCount,
       totalPages,
       usersCount,
       filteredUsers,
       users,
       // Bonus : tendance quotidienne du mois en cours
-      dailyRegistrationTrend: currentMonthStats.dailyTrend || [],
+      // dailyRegistrationTrend: currentMonthStats.dailyTrend || [],
     });
   } catch (error) {
     console.error('Error in getUsers:', error);
@@ -125,51 +142,27 @@ export const deleteUser = async (req, res) => {
 };
 
 export const getPurchasingsStats = async (req, res) => {
-  try {
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
+  // GETTING CURRENT MONTH and CURRENT YEAR
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
 
-    // Une seule requête pour les stats globales et mensuelles
-    const [globalAnalytics, monthlyAnalytics] = await Promise.all([
-      getUserAnalytics(),
-      getUserAnalytics(currentMonth, currentYear),
-    ]);
+  const totalUsersThatBought = await totalUsersThatBoughtPipeline();
 
-    res.status(200).json({
-      // Stats globales
-      totalUsersThatBought: globalAnalytics.uniqueBuyers,
-      userThatBoughtMostSinceBeginning:
-        globalAnalytics.topBuyers.length > 0
-          ? [
-              {
-                _id: globalAnalytics.topBuyers[0]._id,
-                totalPurchases: globalAnalytics.topBuyers[0].totalOrders,
-                result: [globalAnalytics.topBuyers[0].result],
-              },
-            ]
-          : [],
+  const totalUsersThatBoughtThisMonth =
+    await totalUsersThatBoughtThisMonthPipeline(currentMonth, currentYear);
 
-      // Stats mensuelles
-      totalUsersThatBoughtThisMonth: monthlyAnalytics.uniqueBuyers,
-      usersThatBoughtMostThisMonth: monthlyAnalytics.topBuyers.map((buyer) => ({
-        _id: buyer._id,
-        totalPurchases: buyer.totalSpent,
-        totalTaxes: buyer.totalTaxes,
-        result: [buyer.result],
-      })),
+  const userThatBoughtMostSinceBeginning =
+    await userThatBoughtMostSinceBeginningPipeline();
 
-      // Bonus : statistiques détaillées
-      monthlyRevenue: monthlyAnalytics.periodStats[0]?.totalRevenue || 0,
-      monthlyAvgOrderValue: monthlyAnalytics.periodStats[0]?.avgOrderValue || 0,
-      topBuyersDetails: globalAnalytics.topBuyers.slice(0, 5), // Top 5 acheteurs avec détails
-    });
-  } catch (error) {
-    console.error('Error in getPurchasingsStats:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
+  const usersThatBoughtMostThisMonth =
+    await usersThatBoughtMostThisMonthPipeline(currentMonth, currentYear);
+
+  res.status(200).json({
+    totalUsersThatBought,
+    totalUsersThatBoughtThisMonth,
+    userThatBoughtMostSinceBeginning,
+    usersThatBoughtMostThisMonth,
+  });
 };
 
 // ========================================

@@ -154,7 +154,7 @@ export const updateOrder = async (req, res) => {
     // Définir les transitions autorisées
     const allowedTransitions = {
       unpaid: ['paid', 'cancelled'],
-      paid: ['refunded', 'cancelled'],
+      paid: ['refunded'],
       refunded: [], // Aucune transition autorisée
       cancelled: [], // Aucune transition autorisée
     };
@@ -236,10 +236,7 @@ export const updateOrder = async (req, res) => {
       }
 
       // Si on passe de 'paid' à 'refunded' : annuler les ventes et restaurer le stock
-      else if (
-        currentStatus === 'paid' &&
-        (newStatus === 'refunded' || newStatus === 'cancelled')
-      ) {
+      else if (currentStatus === 'paid' && newStatus === 'refunded') {
         // Récupérer les produits avec leurs catégories
         const productIds = order.orderItems.map((item) => item.product);
         const products = await Product.find({
