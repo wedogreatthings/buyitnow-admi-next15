@@ -91,14 +91,14 @@ export const getUser = async (req, res, next) => {
       .limit(50); // Limiter aux 50 dernières commandes
 
     // Si l'utilisateur a des stats pré-calculées, les inclure
-    const userObj = user.toObject();
-    if (user.purchaseStats && user.purchaseStats.totalOrders > 0) {
-      userObj.purchaseStatsCalculated = true;
-    }
+    // const userObj = user.toObject();
+    // if (user.purchaseStats && user.purchaseStats.totalOrders > 0) {
+    //   userObj.purchaseStatsCalculated = true;
+    // }
 
     res.status(200).json({
       success: true,
-      user: userObj,
+      user,
       orders,
       orderCount: orders.length,
     });
