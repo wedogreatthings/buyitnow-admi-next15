@@ -25,7 +25,7 @@ const ProductSalesStat = ({
         : bestProductSoldSinceBeginning?.productName[0]?.substring(0, 12) +
           '...',
       indication: 'Since the beginning',
-      amount: bestProductSoldSinceBeginning?.totalAmount,
+      amount: bestProductSoldSinceBeginning?.totalAmount?.toFixed(2),
       quantity: bestProductSoldSinceBeginning?.totalQuantity,
     },
     {
@@ -35,7 +35,7 @@ const ProductSalesStat = ({
         : leastProductSoldSinceBeginning?.productName[0]?.substring(0, 12) +
           '...',
       indication: 'Since the beginning',
-      amount: leastProductSoldSinceBeginning?.totalAmount,
+      amount: leastProductSoldSinceBeginning?.totalAmount?.toFixed(2),
       quantity: leastProductSoldSinceBeginning?.totalQuantity,
       color: 'red',
     },
@@ -43,14 +43,14 @@ const ProductSalesStat = ({
       title: 'Best Category Sold',
       content: bestCategorySoldSinceBeginning?._id?.substring(0, 12) + '...',
       indication: 'Since the beginning',
-      amount: bestCategorySoldSinceBeginning?.totalAmount,
+      amount: bestCategorySoldSinceBeginning?.totalAmount?.toFixed(2),
       quantity: bestCategorySoldSinceBeginning?.totalQuantity,
     },
     {
       title: 'Least Category Sold',
       content: leastCategorySoldSinceBeginning?._id,
       indication: 'Since the beginning',
-      amount: leastCategorySoldSinceBeginning?.totalAmount,
+      amount: leastCategorySoldSinceBeginning?.totalAmount?.toFixed(2),
       quantity: leastCategorySoldSinceBeginning?.totalQuantity,
       color: 'red',
     },
@@ -60,7 +60,7 @@ const ProductSalesStat = ({
         ? 'None'
         : bestProductSoldThisMonth?.productName[0],
       indication: `${currentMonth}/${currentYear}`,
-      amount: bestProductSoldThisMonth?.totalAmount,
+      amount: bestProductSoldThisMonth?.totalAmount?.toFixed(2),
       quantity: bestProductSoldThisMonth?.totalQuantity,
     },
     {
@@ -69,7 +69,7 @@ const ProductSalesStat = ({
         ? 'None'
         : leastProductSoldThisMonth?.productName[0],
       indication: `${currentMonth}/${currentYear}`,
-      amount: leastProductSoldThisMonth?.totalAmount,
+      amount: leastProductSoldThisMonth?.totalAmount?.toFixed(2),
       quantity: leastProductSoldThisMonth?.totalQuantity,
       color: 'red',
     },
@@ -77,14 +77,14 @@ const ProductSalesStat = ({
       title: 'Best Category Sold This Month',
       content: bestCategorySoldThisMonth?._id,
       indication: `${currentMonth}/${currentYear}`,
-      amount: bestCategorySoldThisMonth?.totalAmount,
+      amount: bestCategorySoldThisMonth?.totalAmount?.toFixed(2),
       quantity: bestCategorySoldThisMonth?.totalQuantity,
     },
     {
       title: 'Least Category Sold This Month',
       content: leastCategorySoldThisMonth?._id,
       indication: `${currentMonth}/${currentYear}`,
-      amount: leastCategorySoldThisMonth?.totalAmount,
+      amount: leastCategorySoldThisMonth?.totalAmount?.toFixed(2),
       quantity: leastCategorySoldThisMonth?.totalQuantity,
       color: 'red',
     },

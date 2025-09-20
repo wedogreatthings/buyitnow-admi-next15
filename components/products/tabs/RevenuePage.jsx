@@ -5,7 +5,9 @@ import React from 'react';
 const RevenuePage = ({ revenues }) => {
   const totalPrice = arrayHasData(revenues)
     ? 0
-    : revenues?.reduce((acc, currentValue) => acc + currentValue?.price, 0);
+    : revenues
+        ?.reduce((acc, currentValue) => acc + currentValue?.price, 0)
+        .toFixed(2);
 
   return (
     <div>
