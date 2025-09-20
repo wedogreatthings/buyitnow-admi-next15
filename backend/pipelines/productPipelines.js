@@ -128,7 +128,7 @@ export const descListProductSoldSinceBeginningPipeline = async () => {
   // Transformer pour matcher l'ancien format
   return analytics.productStats.map((item) => ({
     _id: item._id,
-    totalAmount: item.totalAmount,
+    totalAmount: parseFloat(item.totalAmount.toFixed(2)), // Ajout du formatage
     totalQuantity: item.totalQuantity,
     productName: [item.productInfo.name],
     productCategory: [item.productInfo.category],
@@ -142,7 +142,7 @@ export const descListProductSoldThisMonthPipeline = async (month, year) => {
   // Transformer pour matcher l'ancien format
   return analytics.productStats.map((item) => ({
     _id: item._id,
-    totalAmount: item.totalAmount,
+    totalAmount: parseFloat(item.totalAmount.toFixed(2)), // Ajout du formatage
     totalQuantity: item.totalQuantity,
     productName: [item.productInfo.name],
     productCategory: [item.productInfo.category],
@@ -156,7 +156,7 @@ export const descListCategorySoldSinceBeginningPipeline = async () => {
   // Transformer pour matcher l'ancien format
   return analytics.categoryStats.map((item) => ({
     _id: item._id,
-    totalAmount: item.totalAmount,
+    totalAmount: parseFloat(item.totalAmount.toFixed(2)), // Ajout du formatage
     totalQuantity: item.totalQuantity,
     productName: item.sampleProducts.map((p) => p?.name).filter(Boolean),
     productImage: item.sampleProducts.map((p) => p?.image).filter(Boolean),
@@ -169,7 +169,7 @@ export const descListCategorySoldThisMonthPipeline = async (month, year) => {
   // Transformer pour matcher l'ancien format
   return analytics.categoryStats.map((item) => ({
     _id: item._id,
-    totalAmount: item.totalAmount,
+    totalAmount: parseFloat(item.totalAmount.toFixed(2)), // Ajout du formatage
     totalQuantity: item.totalQuantity,
     productName: item.sampleProducts.map((p) => p?.name).filter(Boolean),
     productImage: item.sampleProducts.map((p) => p?.image).filter(Boolean),
@@ -180,140 +180,76 @@ export const descListCategorySoldThisMonthPipeline = async (month, year) => {
  * Méthode optimisée pour obtenir les commandes contenant un produit spécifique
  * Évite le double $unwind de l'ancienne version
  */
-export const orderIDsForProductPipeline = async (productId) => {
-  try {
-    const pipeline = [
-      // D'abord matcher sur le produit dans l'array (utilise l'index si disponible)
-      {
-        $match: {
-          'orderItems.product': new mongoose.Types.ObjectId(productId),
-        },
+export const orderIDsForProductPipeline = async (id) => {
+  const aggregation = await Order.aggregate([
+    {
+      $unwind: {
+        path: '$orderItems',
       },
-      // Limiter les champs pour optimiser la mémoire
-      {
-        $project: {
-          _id: 1,
-          createdAt: 1,
-          paymentStatus: 1,
-          orderItems: {
-            $filter: {
-              input: '$orderItems',
-              cond: {
-                $eq: ['$$this.product', new mongoose.Types.ObjectId(productId)],
-              },
-            },
-          },
-        },
+    },
+    {
+      $match: {
+        'orderItems.product': new mongoose.Types.ObjectId(id),
       },
-      // Trier par date de création
-      { $sort: { createdAt: -1 } },
-      // Formater la sortie pour compatibilité
-      {
-        $project: {
-          _id: 1,
-          details: [
-            {
-              date: '$createdAt',
-              payment: '$paymentStatus',
-            },
-          ],
-        },
+    },
+    {
+      $group: {
+        _id: '$_id',
+        details: { $push: { date: '$createdAt', payment: '$paymentStatus' } },
       },
-    ];
+    },
+    {
+      $unwind: {
+        path: '$details',
+      },
+    },
+    {
+      $sort: {
+        'details.date': -1,
+      },
+    },
+  ]);
 
-    return await Order.aggregate(pipeline);
-  } catch (error) {
-    console.error('Error in orderIDsForProductPipeline:', error);
-    throw error;
-  }
+  return aggregation;
 };
 
 /**
  * Méthode optimisée pour calculer les revenus générés par un produit
  * Utilise $match avant $unwind pour réduire le dataset
  */
-export const revenuesGeneratedPerProduct = async (productId) => {
-  try {
-    const pipeline = [
-      // Filtrer d'abord les commandes payées
-      { $match: { paymentStatus: 'paid' } },
-
-      // Filtrer les commandes contenant ce produit (utilise l'index)
-      {
-        $match: {
-          'orderItems.product': new mongoose.Types.ObjectId(productId),
-        },
+export const revenuesGeneratedPerProduct = async (id) => {
+  const aggregation = await Order.aggregate([
+    {
+      $unwind: {
+        path: '$orderItems',
       },
-
-      // Maintenant seulement, unwind les items
-      { $unwind: '$orderItems' },
-
-      // Garder seulement les items du produit recherché
-      {
-        $match: {
-          'orderItems.product': new mongoose.Types.ObjectId(productId),
-        },
+    },
+    {
+      $match: {
+        paymentStatus: 'paid',
+        'orderItems.product': new mongoose.Types.ObjectId(id),
       },
-
-      // Grouper et calculer
-      {
-        $group: {
-          _id: '$orderItems.product',
-          totalRevenue: {
-            $sum: { $multiply: ['$orderItems.price', '$orderItems.quantity'] },
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $group: {
+        _id: '$orderItems.product',
+        details: {
+          $push: {
+            date: '$createdAt',
+            quantity: '$orderItems.quantity',
+            price: '$orderItems.price',
           },
-          totalQuantity: { $sum: '$orderItems.quantity' },
-          orderCount: { $sum: 1 },
-          details: {
-            $push: {
-              date: '$createdAt',
-              quantity: '$orderItems.quantity',
-              price: '$orderItems.price',
-              subtotal: {
-                $multiply: ['$orderItems.price', '$orderItems.quantity'],
-              },
-            },
-          },
-          avgOrderValue: {
-            $avg: { $multiply: ['$orderItems.price', '$orderItems.quantity'] },
-          },
-          firstSale: { $min: '$createdAt' },
-          lastSale: { $max: '$createdAt' },
         },
       },
+    },
+  ]);
 
-      // Limiter le nombre de détails pour éviter la surcharge mémoire
-      {
-        $project: {
-          _id: 1,
-          totalRevenue: 1,
-          totalQuantity: 1,
-          orderCount: 1,
-          avgOrderValue: 1,
-          firstSale: 1,
-          lastSale: 1,
-          details: { $slice: ['$details', -100] }, // Garder les 100 dernières ventes
-        },
-      },
-    ];
-
-    const result = await Order.aggregate(pipeline);
-
-    // Retourner dans le format attendu pour compatibilité
-    if (result.length > 0) {
-      return [
-        {
-          _id: result[0]._id,
-          details: result[0].details,
-        },
-      ];
-    }
-
-    return [];
-  } catch (error) {
-    console.error('Error in revenuesGeneratedPerProduct:', error);
-    throw error;
-  }
+  return aggregation;
 };
 
 /**

@@ -232,22 +232,43 @@ export const getProductSales = async (req, res) => {
     const globalAnalytics = await getProductSalesAnalytics();
 
     res.status(200).json({
-      // Stats globales (depuis le début)
-      descListProductSoldSinceBeginning: globalAnalytics.productStats,
-      descListCategorySoldSinceBeginning: globalAnalytics.categoryStats,
+      // Stats globales (depuis le début) - avec formatage
+      descListProductSoldSinceBeginning: globalAnalytics.productStats.map(
+        (item) => ({
+          ...item,
+          totalAmount: parseFloat(item.totalAmount.toFixed(2)),
+        }),
+      ),
+      descListCategorySoldSinceBeginning: globalAnalytics.categoryStats.map(
+        (item) => ({
+          ...item,
+          totalAmount: parseFloat(item.totalAmount.toFixed(2)),
+        }),
+      ),
 
-      // Stats du mois
-      descListProductSoldThisMonth: monthlyAnalytics.productStats,
-      descListCategorySoldThisMonth: monthlyAnalytics.categoryStats,
+      // Stats du mois - avec formatage
+      descListProductSoldThisMonth: monthlyAnalytics.productStats.map(
+        (item) => ({
+          ...item,
+          totalAmount: parseFloat(item.totalAmount.toFixed(2)),
+        }),
+      ),
+      descListCategorySoldThisMonth: monthlyAnalytics.categoryStats.map(
+        (item) => ({
+          ...item,
+          totalAmount: parseFloat(item.totalAmount.toFixed(2)),
+        }),
+      ),
 
-      // Nouvelles métriques bonus
+      // Nouvelles métriques bonus - avec formatage
       totalProductsSold: globalAnalytics.productStats.reduce(
         (acc, p) => acc + p.totalQuantity,
         0,
       ),
-      totalRevenue: globalAnalytics.productStats.reduce(
-        (acc, p) => acc + p.totalAmount,
-        0,
+      totalRevenue: parseFloat(
+        globalAnalytics.productStats
+          .reduce((acc, p) => acc + p.totalAmount, 0)
+          .toFixed(2),
       ),
       topSellingCategory: globalAnalytics.categoryStats[0] || null,
     });
