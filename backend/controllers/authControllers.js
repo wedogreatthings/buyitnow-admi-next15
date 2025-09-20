@@ -87,7 +87,7 @@ export const getUser = async (req, res, next) => {
       user: new mongoose.Types.ObjectId(user?._id),
     })
       .select(
-        'orderNumber totalAmount orderStatus paymentStatus paymentInfo.typePayment createdAt',
+        'orderNumber totalAmount shippingInfo orderStatus paymentStatus paymentInfo.typePayment createdAt',
       )
       .sort({ createdAt: -1 })
       .limit(50); // Limiter aux 50 dernières commandes

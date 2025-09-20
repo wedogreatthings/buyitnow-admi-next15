@@ -5,7 +5,6 @@ import React from 'react';
 import Link from 'next/link';
 
 const OrdersPage = ({ orders }) => {
-  console.log('Orders prop in OrdersPage:', orders);
   // Vérifier si orders est un array valide avec des données
   const hasOrders = Array.isArray(orders) && orders.length > 0;
   const orderCount = hasOrders ? orders.length : 0;
