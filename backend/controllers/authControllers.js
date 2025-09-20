@@ -97,7 +97,7 @@ export const getUser = async (req, res, next) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
   let user = await User.findById(req.query.id);
 
   if (!user) {
@@ -112,7 +112,7 @@ export const updateUser = async (req, res) => {
   });
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   let user = await User.findById(req.query.id);
 
   if (!user) {

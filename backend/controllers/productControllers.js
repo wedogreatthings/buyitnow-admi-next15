@@ -146,6 +146,19 @@ export const removeProductImage = async (req, res, next) => {
       return next(new ErrorHandler('Product not found.', 404));
     }
 
+    const cartContainingThisProduct = await Cart.countDocuments({
+      product: product?._id,
+    });
+
+    if (cartContainingThisProduct > 0) {
+      return next(
+        new ErrorHandler(
+          'Cannot delete images of this product. It is present in one or more carts.',
+          400,
+        ),
+      );
+    }
+
     // Find the image to remove
     const imageToRemove = product.images.find(
       (img) => img._id.toString() === imageId,
@@ -201,22 +214,24 @@ export const deleteProduct = async (req, res, next) => {
   });
 
   if (cartContainingThisProduct > 0) {
-    res.json({
-      error:
-        'There are users that added this product to their cart! If you want to delete it, delete first all the carts containing this product.',
-    });
-  } else {
-    // Deleting images associated with the product
-    for (let i = 0; i < product.images.length; i++) {
-      await cloudinary.v2.uploader.destroy(product.images[i].public_id);
-    }
-
-    await product.deleteOne();
-
-    res.status(200).json({
-      success: true,
-    });
+    return next(
+      new ErrorHandler(
+        'Cannot delete product. It is present in one or more carts.',
+        400,
+      ),
+    );
   }
+
+  // Deleting images associated with the product
+  for (let i = 0; i < product.images.length; i++) {
+    await cloudinary.v2.uploader.destroy(product.images[i].public_id);
+  }
+
+  await product.deleteOne();
+
+  res.status(200).json({
+    success: true,
+  });
 };
 
 // Remplacer la méthode getProductSales par :
