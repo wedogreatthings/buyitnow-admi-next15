@@ -25,8 +25,8 @@ export async function GET(req) {
 
   const searchParams = req.nextUrl.searchParams;
 
-  if (searchParams.get('keyword')) {
-    const orderNumber = searchParams.get('keyword');
+  if (searchParams?.get('keyword')) {
+    const orderNumber = searchParams?.get('keyword');
     orders = await Order.findOne({ orderNumber: orderNumber }).populate(
       'shippingInfo user',
     );
