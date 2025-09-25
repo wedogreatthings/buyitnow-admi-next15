@@ -1,3 +1,4 @@
+import dbConnect from '@/backend/config/dbConnect';
 import DeliveryPrice from '@/backend/models/deliveryPrice';
 import Order from '@/backend/models/order';
 import { getMonthlyOrdersAnalytics } from '@/backend/pipelines/orderPipelines';
@@ -11,6 +12,9 @@ import APIFilters from '@/backend/utils/APIFilters';
 import { NextResponse } from 'next/server';
 
 export async function GET(req) {
+  // Connexion DB
+  await dbConnect();
+
   const resPerPage = 2;
   const ordersCount = await Order.countDocuments();
 

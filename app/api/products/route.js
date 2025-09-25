@@ -1,3 +1,4 @@
+import dbConnect from '@/backend/config/dbConnect';
 import Category from '@/backend/models/category';
 import Product from '@/backend/models/product';
 import User from '@/backend/models/user';
@@ -5,6 +6,9 @@ import APIFilters from '@/backend/utils/APIFilters';
 import { NextResponse } from 'next/server';
 
 export async function GET(req) {
+  // Connexion DB
+  await dbConnect();
+
   const resPerPage = 2;
   const productsCount = await Product.countDocuments();
 
@@ -39,6 +43,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  // Connexion DB
+  await dbConnect();
+
   const user = await User.findOne({ email: req.user.email }).select('_id');
 
   if (!user) {
