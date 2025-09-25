@@ -35,10 +35,7 @@ export async function GET(req) {
 
     if (orders) filteredOrdersCount = 1;
   } else {
-    const apiFilters = new APIFilters(
-      Order.find(),
-      req.nextUrl.searchParams,
-    ).filter();
+    const apiFilters = new APIFilters(Order.find(), searchParams).filter();
 
     orders = await apiFilters.query
       .populate('shippingInfo user')
