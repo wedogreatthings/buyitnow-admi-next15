@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import dbConnect from '@/backend/config/dbConnect';
 import DeliveryPrice from '@/backend/models/deliveryPrice';
 import Address from '@/backend/models/address';
