@@ -4,6 +4,8 @@ import APIFilters from '@/backend/utils/APIFilters';
 import { NextResponse } from 'next/server';
 
 export async function GET(req) {
+  console.log('In products route');
+  console.log(req.nextUrl.searchParams);
   const resPerPage = 2;
   const productsCount = await Product.countDocuments();
 
