@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req) {
   console.log('In products route');
+  console.log('req.url:', req.nextUrl);
   console.log(req.nextUrl.searchParams);
   const resPerPage = 2;
   const productsCount = await Product.countDocuments();
