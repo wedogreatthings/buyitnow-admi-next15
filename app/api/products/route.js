@@ -1,12 +1,10 @@
 import Category from '@/backend/models/category';
 import Product from '@/backend/models/product';
+import User from '@/backend/models/user';
 import APIFilters from '@/backend/utils/APIFilters';
 import { NextResponse } from 'next/server';
 
 export async function GET(req) {
-  console.log('In products route');
-  console.log('req.url:', req.nextUrl);
-  console.log(req.nextUrl.searchParams);
   const resPerPage = 2;
   const productsCount = await Product.countDocuments();
 
@@ -36,6 +34,33 @@ export async function GET(req) {
     },
     {
       status: 200,
+    },
+  );
+}
+
+export async function POST(req) {
+  const user = await User.findOne({ email: req.user.email }).select('_id');
+
+  if (!user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'User not found',
+      },
+      { status: 404 },
+    );
+  }
+
+  req.body.user = user._id;
+
+  const product = await Product.create(req.body);
+
+  return NextResponse.json(
+    {
+      product,
+    },
+    {
+      status: 201,
     },
   );
 }
