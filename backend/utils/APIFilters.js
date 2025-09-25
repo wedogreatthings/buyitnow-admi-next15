@@ -5,10 +5,10 @@ class APIFilters {
   }
 
   search() {
-    const keyword = this.queryStr.keyword
+    const keyword = this.queryStr.get('keyword')
       ? {
           name: {
-            $regex: this.queryStr.keyword,
+            $regex: this.queryStr.get('keyword'),
             $options: 'i',
           },
         }
@@ -49,7 +49,7 @@ class APIFilters {
   }
 
   pagination(resPerPage) {
-    const currentPage = Number(this.queryStr.page) || 1;
+    const currentPage = Number(this.queryStr.get('page')) || 1;
     const skip = resPerPage * (currentPage - 1);
 
     this.query = this.query.limit(resPerPage).skip(skip);
