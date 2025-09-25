@@ -23,15 +23,20 @@ export async function GET(req) {
   let totalPages = 0;
   let result = 0;
 
-  if (req.query.keyword) {
-    const orderNumber = req.query.keyword;
+  const searchParams = req.nextUrl.searchParams;
+
+  if (searchParams.get('keyword')) {
+    const orderNumber = searchParams.get('keyword');
     orders = await Order.findOne({ orderNumber: orderNumber }).populate(
       'shippingInfo user',
     );
 
     if (orders) filteredOrdersCount = 1;
   } else {
-    const apiFilters = new APIFilters(Order.find(), req.query).filter();
+    const apiFilters = new APIFilters(
+      Order.find(),
+      req.nextUrl.searchParams,
+    ).filter();
 
     orders = await apiFilters.query
       .populate('shippingInfo user')
