@@ -10,10 +10,12 @@ import {
 import Cart from '@/backend/models/cart';
 import { cloudinary } from '@/backend/utils/cloudinary';
 
-export async function GET(req) {
+export async function GET(req, { params }) {
+  const { id } = params;
+
   await dbConnect();
 
-  const product = await Product.findById(req.query.id).populate('category');
+  const product = await Product.findById(id).populate('category');
 
   if (!product) {
     return NextResponse.json(
@@ -50,8 +52,11 @@ export async function GET(req) {
   );
 }
 
-export async function PUT(req) {
-  let product = await Product.findById(req.query.id);
+export async function PUT(req, { params }) {
+  const { id } = params;
+  await dbConnect();
+
+  let product = await Product.findById(id);
 
   if (!product) {
     return NextResponse.json(
@@ -66,9 +71,7 @@ export async function PUT(req) {
   // 1. Vérifier si on veut activer le produit
   if (req.body.isActive === true) {
     // 2. Récupérer le produit avec sa catégorie
-    const productWithCategory = await Product.findById(req.query.id).populate(
-      'category',
-    );
+    const productWithCategory = await Product.findById(id).populate('category');
 
     // 3. Vérifier si la catégorie est inactive
     if (!productWithCategory.category.isActive) {
@@ -81,7 +84,7 @@ export async function PUT(req) {
   }
 
   // 6. Continuer avec la mise à jour normale
-  product = await Product.findByIdAndUpdate(req.query.id, req.body, {
+  product = await Product.findByIdAndUpdate(id, req.body, {
     new: true,
   });
 
@@ -91,8 +94,11 @@ export async function PUT(req) {
   );
 }
 
-export async function DELETE(req) {
-  let product = await Product.findById(req.query.id);
+export async function DELETE(req, { params }) {
+  const { id } = params;
+  await dbConnect();
+
+  let product = await Product.findById(id);
 
   if (!product) {
     return NextResponse.json(

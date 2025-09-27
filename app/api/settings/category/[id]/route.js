@@ -3,10 +3,12 @@ import Category from '@/backend/models/category';
 import Product from '@/backend/models/product';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(req) {
+export async function DELETE(req, { params }) {
+  const { id } = params;
+
   await dbConnect();
 
-  const deletingCategory = await Category.findById(req.query.id);
+  const deletingCategory = await Category.findById(id);
 
   if (!deletingCategory) {
     return NextResponse.json(

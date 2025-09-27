@@ -6,12 +6,12 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/backend/config/dbConnect';
 import Product from '@/backend/models/product';
 
-export async function GET(req) {
+export async function GET(req, { params }) {
+  const { id } = params;
+
   await dbConnect();
 
-  const order = await Order.findById(req.query.id).populate(
-    'shippingInfo user',
-  );
+  const order = await Order.findById(id).populate('shippingInfo user');
 
   if (!order) {
     return NextResponse.json({ message: 'No Order found' }, { status: 404 });
@@ -20,17 +20,19 @@ export async function GET(req) {
   return NextResponse.json({ order }, { status: 200 });
 }
 
-export async function PUT(req) {
+export async function PUT(req, { params }) {
+  const { id } = params;
+
   await dbConnect();
 
-  let order = await Order.findById(req.query.id);
+  let order = await Order.findById(id);
 
   if (!order) {
     return NextResponse.json({ message: 'No Order found' }, { status: 404 });
   }
 
   if (req.body.orderStatus) {
-    order = await Order.findByIdAndUpdate(req.query.id, {
+    order = await Order.findByIdAndUpdate(id, {
       orderStatus: req.body.orderStatus,
     });
   }
@@ -207,7 +209,7 @@ export async function PUT(req) {
 
     // Effectuer la mise à jour si la transition est valide
     order = await Order.findByIdAndUpdate(
-      req.query.id,
+      id,
       {
         paymentStatus: newStatus,
       },

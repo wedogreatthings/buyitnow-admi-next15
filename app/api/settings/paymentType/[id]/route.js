@@ -2,10 +2,12 @@ import dbConnect from '@/backend/config/dbConnect';
 import PaymentType from '@/backend/models/paymentType';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(req) {
+export async function DELETE(req, { params }) {
+  const { id } = params;
+
   await dbConnect();
 
-  const payment = await PaymentType.findById(req.query.id);
+  const payment = await PaymentType.findById(id);
 
   if (!payment) {
     return NextResponse.json(

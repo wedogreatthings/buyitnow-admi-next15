@@ -2,10 +2,12 @@ import dbConnect from '@/backend/config/dbConnect';
 import DeliveryPrice from '@/backend/models/deliveryPrice';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(req) {
+export async function DELETE(req, { params }) {
+  const { id } = params;
+
   await dbConnect();
 
-  const deliveryPrice = await DeliveryPrice.findById(req.query.id);
+  const deliveryPrice = await DeliveryPrice.findById(id);
 
   if (!deliveryPrice) {
     return NextResponse.json(
