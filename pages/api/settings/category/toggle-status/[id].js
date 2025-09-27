@@ -12,6 +12,6 @@ const router = createRouter();
 dbConnect();
 router
   .use(isAuthenticatedUser, authorizeRoles('admin'))
-  .patch(toggleCategoryStatus);
+  .put(toggleCategoryStatus);
 
 export default router.handler({ onError });
