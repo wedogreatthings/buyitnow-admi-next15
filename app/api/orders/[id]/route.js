@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Order from '@/backend/models/order';
-import Address from '../models/address';
-import Category from '../models/category';
+import Address from '@/backend/models/address';
+import Category from '@/backend/models/category';
 import { NextResponse } from 'next/server';
 import dbConnect from '@/backend/config/dbConnect';
 import Product from '@/backend/models/product';
