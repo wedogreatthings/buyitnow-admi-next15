@@ -19,6 +19,12 @@ const validateEnv = () => {
     'NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME',
     'NEXT_PUBLIC_CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
+    'VERCEL',
+    'NODE_ENV',
+    'SENTRY_PROJECT',
+    'SENTRY_AUTH_TOKEN',
+    'SENTRY_ORG',
+    'SENTRY_DSN',
   ];
 
   // Vérification en production uniquement
