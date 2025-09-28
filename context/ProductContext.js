@@ -48,22 +48,23 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const uploadProductImages = async (formData, id) => {
+  // Nouvelle méthode pour ajouter des images via Cloudinary Widget
+  const addProductImages = async (images, id) => {
     try {
       setLoading(true);
 
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/products/upload_images/${id}`,
-        formData,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}/images`,
+        { images },
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
           },
         },
       );
 
       if (data?.data) {
-        // Update product images by appending new images
+        // Update product images with the new complete array
         setProductImages(data.data);
         setLoading(false);
       }
@@ -73,12 +74,13 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  // Méthode mise à jour pour supprimer une image
   const removeProductImage = async (productId, imageId) => {
     try {
       setLoading(true);
 
       const { data } = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/products/remove_image/${productId}/${imageId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}/images?imageId=${imageId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -132,7 +134,7 @@ export const ProductProvider = ({ children }) => {
         setLoading,
         setProductImages,
         newProduct,
-        uploadProductImages,
+        addProductImages, // Nouvelle méthode
         removeProductImage,
         updateProduct,
         deleteProduct,

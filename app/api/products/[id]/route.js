@@ -11,7 +11,7 @@ import Cart from '@/backend/models/cart';
 import { cloudinary } from '@/backend/utils/cloudinary';
 
 export async function GET(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
 
   await dbConnect();
 
@@ -53,7 +53,7 @@ export async function GET(req, { params }) {
 }
 
 export async function PUT(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
   await dbConnect();
 
   let product = await Product.findById(id);
@@ -65,18 +65,20 @@ export async function PUT(req, { params }) {
     );
   }
 
+  const body = await req.json();
+
   // Pseudo-code de la logique
   let warningMessage = null;
 
   // 1. Vérifier si on veut activer le produit
-  if (req.body.isActive === true) {
+  if (body.isActive === true) {
     // 2. Récupérer le produit avec sa catégorie
     const productWithCategory = await Product.findById(id).populate('category');
 
     // 3. Vérifier si la catégorie est inactive
     if (!productWithCategory.category.isActive) {
       // 4. Supprimer isActive de la mise à jour
-      delete req.body.isActive;
+      delete body.isActive;
 
       // 5. Préparer le message d'avertissement
       warningMessage = `Product updated successfully, but cannot be activated because the category "${productWithCategory.category.categoryName}" is inactive. Activate the category first.`;
@@ -84,7 +86,7 @@ export async function PUT(req, { params }) {
   }
 
   // 6. Continuer avec la mise à jour normale
-  product = await Product.findByIdAndUpdate(id, req.body, {
+  product = await Product.findByIdAndUpdate(id, body, {
     new: true,
   });
 
@@ -95,7 +97,7 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
-  const { id } = params;
+  const { id } = await params;
   await dbConnect();
 
   let product = await Product.findById(id);

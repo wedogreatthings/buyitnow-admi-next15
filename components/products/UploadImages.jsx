@@ -2,13 +2,13 @@
 'use client';
 
 import React, { useContext, useState, useEffect, memo } from 'react';
-import Image from 'next/image';
 import { toast } from 'react-toastify';
+import { CldUploadWidget, CldImage } from 'next-cloudinary';
 import ProductContext from '@/context/ProductContext';
 
 const UploadImages = memo(({ id }) => {
   const {
-    uploadProductImages,
+    addProductImages,
     productImages,
     removeProductImage,
     error,
@@ -16,34 +16,7 @@ const UploadImages = memo(({ id }) => {
     clearErrors,
   } = useContext(ProductContext);
 
-  const [images, setImages] = useState([]);
-  const [imagesPreview, setImagesPreview] = useState([]);
   const [isRemoving, setIsRemoving] = useState({});
-
-  // Reset previews when component mounts or productImages changes
-  useEffect(() => {
-    setImagesPreview([]);
-  }, [productImages]);
-
-  const onChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    setImages([]);
-    setImagesPreview([]);
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setImagesPreview((oldArray) => [...oldArray, reader.result]);
-        }
-      };
-
-      setImages((oldArray) => [...oldArray, file]);
-      reader.readAsDataURL(file);
-    });
-  };
 
   useEffect(() => {
     if (error) {
@@ -53,34 +26,25 @@ const UploadImages = memo(({ id }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
+  const handleUploadSuccess = (result) => {
+    // Quand l'upload est réussi, ajouter l'image au produit
+    const newImage = {
+      public_id: result.info.public_id,
+      url: result.info.secure_url,
+    };
 
-    const formData = new FormData();
+    // Appeler la méthode du context pour ajouter l'image à la base de données
+    addProductImages([newImage], id);
 
-    images.forEach((image) => {
-      formData.append('image', image);
-    });
+    toast.success('Image uploaded successfully!');
+  };
 
-    uploadProductImages(formData, id);
+  const handleUploadError = (error) => {
+    console.error('Upload error:', error);
+    toast.error('Failed to upload image');
   };
 
   const handleRemoveImage = async (imageToRemove) => {
-    // If it's a newly added preview image
-    if (
-      typeof imageToRemove === 'string' &&
-      imageToRemove.startsWith('data:')
-    ) {
-      setImagesPreview((prev) => prev.filter((img) => img !== imageToRemove));
-      setImages((prev) =>
-        prev.filter(
-          (_, index) => imagesPreview.indexOf(imageToRemove) !== index,
-        ),
-      );
-      return;
-    }
-
-    // If it's an existing product image
     if (imageToRemove._id) {
       try {
         // Start removal animation
@@ -92,7 +56,6 @@ const UploadImages = memo(({ id }) => {
         // Call context method to remove image
         await removeProductImage(id, imageToRemove._id);
 
-        // Optional: Add success toast
         toast.success('Image removed successfully');
         // eslint-disable-next-line no-unused-vars
       } catch (err) {
@@ -108,81 +71,88 @@ const UploadImages = memo(({ id }) => {
       style={{ maxWidth: '480px' }}
       className="mt-1 mb-20 p-4 md:p-7 mx-auto rounded-sm bg-white shadow-lg"
     >
-      <form onSubmit={submitHandler}>
-        <h2 className="mb-3 text-2xl font-semibold">Upload Product Images</h2>
+      <h2 className="mb-3 text-2xl font-semibold">Upload Product Images</h2>
 
-        <div className="mb-4 flex flex-col md:flex-row">
-          <div className="w-full">
-            <input
-              className="form-control block w-full px-2 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded-sm transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-hidden mt-8"
-              type="file"
-              id="formFile"
-              multiple
-              onChange={onChange}
-            />
+      {/* Cloudinary Upload Widget */}
+      <div className="mb-4">
+        <CldUploadWidget
+          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+          options={{
+            multiple: true,
+            maxFiles: 10,
+            folder: 'buyitnow/products',
+            resourceType: 'image',
+            clientAllowedFormats: ['jpeg', 'jpg', 'png', 'webp'],
+            maxFileSize: 5000000, // 5MB
+            transformation: [
+              { width: 800, height: 800, crop: 'limit' },
+              { quality: 'auto' },
+              { format: 'auto' },
+            ],
+          }}
+          onSuccess={handleUploadSuccess}
+          onError={handleUploadError}
+        >
+          {({ open }) => (
+            <button
+              type="button"
+              onClick={() => open()}
+              className="w-full px-4 py-2 text-center text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={loading}
+            >
+              {loading ? 'Processing...' : 'Add Images'}
+            </button>
+          )}
+        </CldUploadWidget>
+      </div>
+
+      {/* Existing Product Images */}
+      {productImages && productImages.length > 0 && (
+        <div>
+          <h3 className="mb-3 text-lg font-medium">Current Images</h3>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 my-5">
+            {productImages.map((img) => (
+              <div key={img._id} className="relative group">
+                <div className="aspect-square">
+                  <CldImage
+                    src={img.public_id}
+                    alt="Product image"
+                    width={150}
+                    height={150}
+                    crop="fill"
+                    gravity="center"
+                    className={`object-cover rounded-sm border-2 border-gray-300 transition-all duration-300 w-full h-full ${
+                      isRemoving[img._id] ? 'opacity-0 scale-75' : 'opacity-100'
+                    }`}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(img)}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-600"
+                  disabled={loading}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Existing Product Images */}
-        {productImages && productImages.length > 0 && (
-          <div className="grid grid-cols-6 gap-2 my-5">
-            {productImages.map((img) => (
-              <div key={img._id} className="relative col-span-1 group">
-                <Image
-                  src={img.url}
-                  alt="Product"
-                  className={`object-contain shadow-sm rounded-sm border-2 border-gray p-2 h-full w-full transition-all duration-300 ${
-                    isRemoving[img._id] ? 'opacity-0 scale-75' : 'opacity-100'
-                  }`}
-                  width="50"
-                  height="50"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(img)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <i className="fa fa-trash" aria-hidden="true"></i>
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Preview of New Images */}
-        {imagesPreview.length > 0 && (
-          <div className="grid grid-cols-6 gap-2 my-5">
-            {imagesPreview.map((img, index) => (
-              <div key={index} className="relative col-span-1 group">
-                <Image
-                  src={img}
-                  alt="Preview"
-                  className="col-span-1 object-contain shadow-sm rounded-sm border-2 border-gray p-2 h-full w-full"
-                  width="50"
-                  height="50"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(img)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <i className="fa fa-trash" aria-hidden="true"></i>
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          className="my-2 px-4 py-2 text-center w-full inline-block text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
-          disabled={
-            loading || (images.length === 0 && imagesPreview.length === 0)
-          }
-        >
-          {loading ? 'Uploading...' : 'Upload'}
-        </button>
-      </form>
+      {/* Instructions */}
+      <div className="mt-6 p-4 bg-gray-50 rounded-md">
+        <h4 className="text-sm font-medium text-gray-900 mb-2">
+          Instructions:
+        </h4>
+        <ul className="text-sm text-gray-600 space-y-1">
+          <li>• Click &quot;Add Images&quot; to upload new product images</li>
+          <li>• Supported formats: JPEG, JPG, PNG, WebP</li>
+          <li>• Maximum file size: 5MB per image</li>
+          <li>• Hover over existing images to remove them</li>
+          <li>• Images are automatically optimized for web</li>
+        </ul>
+      </div>
     </div>
   );
 });
