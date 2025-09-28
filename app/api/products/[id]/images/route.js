@@ -1,7 +1,7 @@
 import dbConnect from '@/backend/config/dbConnect';
 import Product from '@/backend/models/product';
-import { NextResponse } from 'next/server';
 import { cloudinary } from '@/backend/utils/cloudinary';
+import { NextResponse } from 'next/server';
 
 // POST - Ajouter des images au produit (depuis Cloudinary Upload Widget)
 export async function POST(req, { params }) {

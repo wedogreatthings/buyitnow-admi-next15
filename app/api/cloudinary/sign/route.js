@@ -1,12 +1,5 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { cloudinary } from '@/backend/utils/cloudinary';
 import { NextResponse } from 'next/server';
-
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-});
 
 export async function POST(req) {
   try {
@@ -14,7 +7,7 @@ export async function POST(req) {
     const { paramsToSign } = body;
 
     // Générer la signature pour les paramètres
-    const signature = cloudinary.utils.api_sign_request(
+    const signature = await cloudinary.utils.api_sign_request(
       paramsToSign,
       process.env.CLOUDINARY_API_SECRET,
     );
@@ -45,7 +38,7 @@ export async function GET() {
     };
 
     // Générer la signature
-    const signature = cloudinary.utils.api_sign_request(
+    const signature = await cloudinary.utils.api_sign_request(
       uploadParams,
       process.env.CLOUDINARY_API_SECRET,
     );
