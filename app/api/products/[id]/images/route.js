@@ -57,7 +57,7 @@ export async function POST(req, { params }) {
 // DELETE - Supprimer une image du produit
 export async function DELETE(req, { params }) {
   try {
-    console.log('Params', params);
+    console.log('Params', await params);
     const { id } = await params;
     const url = new URL(req.url);
     const imageId = url.searchParams.get('imageId');
