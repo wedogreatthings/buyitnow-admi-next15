@@ -29,3 +29,40 @@ export async function POST(req) {
     );
   }
 }
+
+// GET - Récupérer les paramètres de configuration pour l'upload
+export async function GET() {
+  try {
+    const timestamp = Math.round(new Date().getTime() / 1000);
+
+    // Paramètres d'upload
+    const uploadParams = {
+      timestamp: timestamp,
+      folder: 'buyitnow/products',
+      resource_type: 'image',
+      allowed_formats: 'jpg,jpeg,png,webp',
+      max_file_size: 5000000, // 5MB
+      transformation: 'w_800,h_800,c_limit,q_auto,f_auto',
+    };
+
+    // Générer la signature
+    const signature = cloudinary.utils.api_sign_request(
+      uploadParams,
+      process.env.CLOUDINARY_API_SECRET,
+    );
+
+    return NextResponse.json({
+      signature,
+      timestamp,
+      cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      apiKey: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+      uploadParams,
+    });
+  } catch (error) {
+    console.error('Error getting upload config:', error);
+    return NextResponse.json(
+      { error: 'Failed to get upload configuration' },
+      { status: 500 },
+    );
+  }
+}
