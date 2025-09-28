@@ -19,12 +19,14 @@ const validateEnv = () => {
     'NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME',
     'NEXT_PUBLIC_CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
-    'VERCEL',
-    'NODE_ENV',
+  ];
+
+  // Variables optionnelles (Sentry)
+  const OPTIONAL_VARS = [
+    'SENTRY_DSN',
     'SENTRY_PROJECT',
     'SENTRY_AUTH_TOKEN',
     'SENTRY_ORG',
-    'SENTRY_DSN',
   ];
 
   // Vérification en production uniquement
@@ -45,6 +47,16 @@ const validateEnv = () => {
       }
     } else {
       console.log('✅ All required environment variables are present');
+    }
+
+    // Vérifier les variables optionnelles
+    const missingOptional = OPTIONAL_VARS.filter(
+      (varName) => !process.env[varName],
+    );
+    if (missingOptional.length > 0) {
+      console.warn(
+        `⚠️ Missing optional variables (Sentry may not work): ${missingOptional.join(', ')}`,
+      );
     }
   }
 };
@@ -112,16 +124,18 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
-          // CSP adapté pour admin avec Font Awesome
+          // CSP CORRIGÉE pour Cloudinary Upload Widget
           {
             key: 'Content-Security-Policy',
             value: `
-              default-src 'self';
-              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://res.cloudinary.com https://cdnjs.cloudflare.com;
+              default-src 'self' blob:;
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://upload-widget.cloudinary.com https://widget.cloudinary.com https://res.cloudinary.com https://cdnjs.cloudflare.com;
               style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-              img-src 'self' blob: data: https://res.cloudinary.com;
+              img-src 'self' blob: data: https://res.cloudinary.com https://*.cloudinary.com;
               font-src 'self' data: https://cdnjs.cloudflare.com;
-              connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com ${process.env.NODE_ENV === 'production' ? 'https://*.sentry.io' : ''};
+              connect-src 'self' blob: https://res.cloudinary.com https://api.cloudinary.com https://upload-widget.cloudinary.com https://widget.cloudinary.com ${process.env.NODE_ENV === 'production' ? 'https://*.sentry.io' : ''};
+              frame-src 'self' https://upload-widget.cloudinary.com https://widget.cloudinary.com;
+              worker-src 'self' blob:;
               frame-ancestors 'none';
               base-uri 'self';
               form-action 'self';

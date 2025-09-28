@@ -1,6 +1,6 @@
 import React from 'react';
 import { GlobalProvider } from './GlobalProvider';
-import './globals.css';
+import './globals.css'; // Import CSS normal, pas dynamique
 import Head from './head';
 import Header from '@/components/layouts/Header';
 
