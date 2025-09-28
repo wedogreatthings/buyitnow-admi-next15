@@ -4,7 +4,7 @@
 import SettingsContext from '@/context/SettingsContext';
 import { arrayHasData } from '@/helpers/helpers';
 import Link from 'next/link';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
@@ -17,6 +17,14 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
     error,
     clearErrors,
   } = useContext(SettingsContext);
+
+  // États de loading individuels
+  const [loadingStates, setLoadingStates] = useState({
+    deletingCategories: new Set(),
+    togglingCategories: new Set(),
+    deletingDeliveryPrices: new Set(),
+    deletingPayments: new Set(),
+  });
 
   useEffect(() => {
     setCategories(dataCategory?.categories);
@@ -36,20 +44,68 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
     'bg-fuchsia-500',
   ];
 
-  const deleteDeliveryPriceHandler = (id) => {
-    deleteDeliveryPrice(id);
+  // Fonctions utilitaires pour gérer les états de loading
+  const setLoadingState = (type, id, isLoading) => {
+    setLoadingStates((prev) => {
+      const newSet = new Set(prev[type]);
+      if (isLoading) {
+        newSet.add(id);
+      } else {
+        newSet.delete(id);
+      }
+      return {
+        ...prev,
+        [type]: newSet,
+      };
+    });
   };
 
-  const deletePaymentHandler = (id) => {
-    deletePayment(id);
+  const isLoading = (type, id) => {
+    return loadingStates[type].has(id);
   };
 
-  const deleteCategoryHandler = (id) => {
-    deleteCategory(id);
+  const deleteDeliveryPriceHandler = async (id) => {
+    if (isLoading('deletingDeliveryPrices', id)) return;
+
+    try {
+      setLoadingState('deletingDeliveryPrices', id, true);
+      await deleteDeliveryPrice(id);
+    } finally {
+      setLoadingState('deletingDeliveryPrices', id, false);
+    }
   };
 
-  const toggleCategoryStatusHandler = (id) => {
-    toggleCategoryStatus(id);
+  const deletePaymentHandler = async (id) => {
+    if (isLoading('deletingPayments', id)) return;
+
+    try {
+      setLoadingState('deletingPayments', id, true);
+      await deletePayment(id);
+    } finally {
+      setLoadingState('deletingPayments', id, false);
+    }
+  };
+
+  const deleteCategoryHandler = async (id) => {
+    if (isLoading('deletingCategories', id)) return;
+
+    try {
+      setLoadingState('deletingCategories', id, true);
+      await deleteCategory(id);
+    } finally {
+      setLoadingState('deletingCategories', id, false);
+    }
+  };
+
+  const toggleCategoryStatusHandler = async (id) => {
+    if (isLoading('togglingCategories', id)) return;
+
+    try {
+      setLoadingState('togglingCategories', id, true);
+      await toggleCategoryStatus(id);
+    } finally {
+      setLoadingState('togglingCategories', id, false);
+    }
   };
 
   // Séparer les catégories actives et inactives
@@ -58,52 +114,101 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
   const inactiveCategories =
     dataCategory?.categories?.filter((cat) => !cat.isActive) || [];
 
-  const renderCategoryCard = (category, index, isActive) => (
-    <div
-      key={category?._id}
-      className={`relative min-w-32 p-4 rounded-sm ml-6 justify-center items-center ${
-        isActive ? colors[index % colors.length] : 'bg-gray-400'
-      } ${!isActive ? 'opacity-75' : ''}`}
-    >
-      {/* Bouton de suppression */}
-      <div
-        className="absolute top-1 right-2 cursor-pointer text-white hover:text-red-200"
-        onClick={() => deleteCategoryHandler(category?._id)}
-      >
-        <i className="fa fa-xmark" aria-hidden="true"></i>
-      </div>
+  const renderCategoryCard = (category, index, isActive) => {
+    const isDeleting = isLoading('deletingCategories', category._id);
+    const isToggling = isLoading('togglingCategories', category._id);
+    const isAnyOperation = isDeleting || isToggling;
 
-      {/* Bouton de basculement du statut */}
+    return (
       <div
-        className="absolute top-1 left-2 cursor-pointer text-white hover:text-yellow-200"
-        onClick={() => toggleCategoryStatusHandler(category?._id)}
-        title={isActive ? 'Désactiver' : 'Activer'}
+        key={category?._id}
+        className={`relative min-w-32 p-4 rounded-sm ml-6 justify-center items-center transition-all duration-300 ${
+          isActive ? colors[index % colors.length] : 'bg-gray-400'
+        } ${!isActive ? 'opacity-75' : ''} ${
+          isAnyOperation ? 'opacity-50 scale-95' : ''
+        }`}
       >
-        <i
-          className={`fa ${isActive ? 'fa-toggle-on' : 'fa-toggle-off'}`}
-          aria-hidden="true"
-        ></i>
-      </div>
+        {/* Overlay de loading */}
+        {isAnyOperation && (
+          <div className="absolute inset-0 bg-black bg-opacity-30 rounded-sm flex items-center justify-center z-10">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              <span className="text-white text-xs mt-2 font-semibold">
+                {isDeleting ? 'Deleting...' : 'Updating...'}
+              </span>
+            </div>
+          </div>
+        )}
 
-      <div className="text-center mt-4">
-        <span className="text-white font-bold text-sm block mb-2">
-          {category?.categoryName}
-        </span>
-        <div className="bg-black bg-opacity-30 rounded px-2 py-1 mb-2">
-          <span className="text-white text-xs font-semibold">
-            Sold: {category?.sold || 0}
-          </span>
-        </div>
-        <div
-          className={`rounded px-2 py-1 text-xs font-bold ${
-            isActive ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+        {/* Bouton de suppression */}
+        <button
+          type="button"
+          className={`absolute top-1 right-2 text-white transition-colors duration-200 ${
+            isAnyOperation
+              ? 'cursor-not-allowed opacity-50'
+              : 'cursor-pointer hover:text-red-200'
           }`}
+          onClick={() => deleteCategoryHandler(category?._id)}
+          disabled={isAnyOperation}
+          title={
+            isAnyOperation ? 'Operation in progress...' : 'Delete category'
+          }
         >
-          {isActive ? 'ACTIVE' : 'INACTIVE'}
+          {isDeleting ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          ) : (
+            <i className="fa fa-xmark" aria-hidden="true"></i>
+          )}
+        </button>
+
+        {/* Bouton de basculement du statut */}
+        <button
+          type="button"
+          className={`absolute top-1 left-2 text-white transition-colors duration-200 ${
+            isAnyOperation
+              ? 'cursor-not-allowed opacity-50'
+              : 'cursor-pointer hover:text-yellow-200'
+          }`}
+          onClick={() => toggleCategoryStatusHandler(category?._id)}
+          disabled={isAnyOperation}
+          title={
+            isAnyOperation
+              ? 'Operation in progress...'
+              : isActive
+                ? 'Deactivate'
+                : 'Activate'
+          }
+        >
+          {isToggling ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          ) : (
+            <i
+              className={`fa ${isActive ? 'fa-toggle-on' : 'fa-toggle-off'}`}
+              aria-hidden="true"
+            ></i>
+          )}
+        </button>
+
+        <div className="text-center mt-4">
+          <span className="text-white font-bold text-sm block mb-2">
+            {category?.categoryName}
+          </span>
+          <div className="bg-black bg-opacity-30 rounded px-2 py-1 mb-2">
+            <span className="text-white text-xs font-semibold">
+              Sold: {category?.sold || 0}
+            </span>
+          </div>
+          <div
+            className={`rounded px-2 py-1 text-xs font-bold ${
+              isActive ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`}
+          >
+            {isActive ? 'ACTIVE' : 'INACTIVE'}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -126,22 +231,51 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
             </p>
           </div>
         ) : (
-          dataDeliveryPrice?.deliveryPrice.map((price) => (
-            <div
-              key={price?._id}
-              className="relative w-30 p-8 rounded-sm ml-6 justify-center items-center bg-orange-950"
-            >
+          dataDeliveryPrice?.deliveryPrice.map((price) => {
+            const isDeleting = isLoading('deletingDeliveryPrices', price._id);
+
+            return (
               <div
-                className="absolute top-0 right-1.5 cursor-pointer"
-                onClick={() => deleteDeliveryPriceHandler(price?._id)}
+                key={price?._id}
+                className={`relative w-30 p-8 rounded-sm ml-6 justify-center items-center bg-orange-950 transition-all duration-300 ${
+                  isDeleting ? 'opacity-50 scale-95' : ''
+                }`}
               >
-                <i className="fa fa-xmark" aria-hidden="true"></i>
+                {/* Overlay de loading */}
+                {isDeleting && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-sm flex items-center justify-center">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      <span className="text-white text-xs mt-1">
+                        Deleting...
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className={`absolute top-0 right-1.5 text-white ${
+                    isDeleting
+                      ? 'cursor-not-allowed opacity-50'
+                      : 'cursor-pointer hover:text-red-200'
+                  }`}
+                  onClick={() => deleteDeliveryPriceHandler(price?._id)}
+                  disabled={isDeleting}
+                  title={isDeleting ? 'Deleting...' : 'Delete delivery price'}
+                >
+                  {isDeleting ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    <i className="fa fa-xmark" aria-hidden="true"></i>
+                  )}
+                </button>
+                <span className="text-white font-bold text-sm">
+                  $ {price?.deliveryPrice}
+                </span>
               </div>
-              <span className="text-white font-bold text-sm">
-                $ {price?.deliveryPrice}
-              </span>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -218,26 +352,56 @@ const Settings = ({ dataCategory, dataPayment, dataDeliveryPrice }) => {
             </p>
           </div>
         ) : (
-          dataPayment?.paymentTypes.map((payment) => (
-            <div
-              key={payment?._id}
-              className="relative w-30 p-8 rounded-sm ml-6 justify-center items-center bg-emerald-900 shadow-md"
-            >
+          dataPayment?.paymentTypes.map((payment) => {
+            const isDeleting = isLoading('deletingPayments', payment._id);
+
+            return (
               <div
-                className="absolute top-0 right-1.5 cursor-pointer"
-                onClick={() => deletePaymentHandler(payment?._id)}
+                key={payment?._id}
+                className={`relative w-30 p-8 rounded-sm ml-6 justify-center items-center bg-emerald-900 shadow-md transition-all duration-300 ${
+                  isDeleting ? 'opacity-50 scale-95' : ''
+                }`}
               >
-                <i className="fa fa-xmark" aria-hidden="true"></i>
+                {/* Overlay de loading */}
+                {isDeleting && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-sm flex items-center justify-center">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      <span className="text-white text-xs mt-1">
+                        Deleting...
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className={`absolute top-0 right-1.5 text-white ${
+                    isDeleting
+                      ? 'cursor-not-allowed opacity-50'
+                      : 'cursor-pointer hover:text-red-200'
+                  }`}
+                  onClick={() => deletePaymentHandler(payment?._id)}
+                  disabled={isDeleting}
+                  title={isDeleting ? 'Deleting...' : 'Delete payment type'}
+                >
+                  {isDeleting ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    <i className="fa fa-xmark" aria-hidden="true"></i>
+                  )}
+                </button>
+
+                <span className="text-white font-bold text-sm italic underline">
+                  {payment?.paymentName}
+                </span>
+                <br />
+                <span className="text-white font-bold text-sm">
+                  {payment?.paymentNumber}
+                </span>
               </div>
-              <span className="text-white font-bold text-sm italic underline">
-                {payment?.paymentName}
-              </span>
-              <br />
-              <span className="text-white font-bold text-sm">
-                {payment?.paymentNumber}
-              </span>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

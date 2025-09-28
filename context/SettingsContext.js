@@ -28,10 +28,15 @@ export const SettingsProvider = ({ children }) => {
       if (data) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Delivery price added successfully');
         setLoading(false);
       }
     } catch (error) {
       setError(error?.response?.data?.message);
+      toast.error(
+        error?.response?.data?.message || 'Failed to add delivery price',
+      );
+      setLoading(false);
     }
   };
 
@@ -47,10 +52,15 @@ export const SettingsProvider = ({ children }) => {
       if (data) {
         router.push('/admin/settings');
         router.refresh();
+        toast.success('Payment type added successfully');
         setLoading(false);
       }
     } catch (error) {
       setError(error?.response?.data?.message);
+      toast.error(
+        error?.response?.data?.message || 'Failed to add payment type',
+      );
+      setLoading(false);
     }
   };
 
@@ -78,14 +88,18 @@ export const SettingsProvider = ({ children }) => {
       }
     } catch (error) {
       setError(error?.response?.data?.error || error?.response?.data?.message);
+      toast.error(
+        error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          'Failed to add category',
+      );
+      setLoading(false);
     }
   };
 
-  // NOUVELLE MÉTHODE : Basculer le statut isActive d'une catégorie
+  // AMÉLIORATION : Meilleure gestion des erreurs et feedback
   const toggleCategoryStatus = async (categoryId) => {
     try {
-      setLoading(true);
-
       const { data } = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/category/toggle-status/${categoryId}`,
         {},
@@ -108,77 +122,99 @@ export const SettingsProvider = ({ children }) => {
 
         toast.success(data.message);
         router.refresh();
+        return { success: true, data };
+      } else {
+        throw new Error(data.message || 'Failed to update category status');
       }
     } catch (error) {
-      setError(
-        error?.response?.data?.message || 'Failed to update category status',
-      );
-      toast.error(
-        error?.response?.data?.message || 'Failed to update category status',
-      );
-    } finally {
-      setLoading(false);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        'Failed to update category status';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw error; // Re-throw pour que le composant puisse gérer l'état de loading
     }
   };
 
+  // AMÉLIORATION : Meilleure gestion des retours et erreurs
   const deleteDeliveryPrice = async (id) => {
     try {
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/deliveryPrice/${id}`,
       );
 
-      if (data?.success) {
+      // Vérifier si la réponse contient un message de succès
+      if (data?.message && data.message.includes('successfully')) {
         router.push('/admin/settings');
         router.refresh();
         toast.success('Delivery price deleted successfully');
+        return { success: true, data };
+      } else {
+        throw new Error(data?.message || 'Failed to delete delivery price');
       }
     } catch (error) {
-      setError(error?.response?.data?.message);
-      toast.error(
-        error?.response?.data?.message || 'Failed to delete delivery price',
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        'Failed to delete delivery price';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw error;
     }
   };
 
+  // AMÉLIORATION : Meilleure gestion des retours et erreurs
   const deleteCategory = async (id) => {
     try {
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/category/${id}`,
       );
 
-      if (data?.success) {
+      // Vérifier si la réponse contient un message de succès
+      if (data?.message && data.message.includes('successfully')) {
         router.push('/admin/settings');
         router.refresh();
         toast.success('Category deleted successfully');
-      } else if (data?.error) {
-        // Gérer le cas où la catégorie a des produits associés
-        setError(data.error);
-        toast.error(data.error);
+        return { success: true, data };
+      } else {
+        throw new Error(data?.message || 'Failed to delete category');
       }
     } catch (error) {
-      setError(error?.response?.data?.message);
-      toast.error(
-        error?.response?.data?.message || 'Failed to delete category',
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        'Failed to delete category';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw error;
     }
   };
 
+  // AMÉLIORATION : Meilleure gestion des retours et erreurs
   const deletePayment = async (id) => {
     try {
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/paymentType/${id}`,
       );
 
-      if (data?.success) {
+      // Vérifier si la réponse contient un message de succès
+      if (data?.message && data.message.includes('successfully')) {
         router.push('/admin/settings');
         router.refresh();
         toast.success('Payment type deleted successfully');
+        return { success: true, data };
+      } else {
+        throw new Error(data?.message || 'Failed to delete payment type');
       }
     } catch (error) {
-      setError(error?.response?.data?.message);
-      toast.error(
-        error?.response?.data?.message || 'Failed to delete payment type',
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        'Failed to delete payment type';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw error;
     }
   };
 
@@ -198,7 +234,7 @@ export const SettingsProvider = ({ children }) => {
         newDeliveryPrice,
         newPaymentType,
         newCategory,
-        toggleCategoryStatus, // NOUVELLE MÉTHODE AJOUTÉE
+        toggleCategoryStatus,
         deleteDeliveryPrice,
         deleteCategory,
         deletePayment,
