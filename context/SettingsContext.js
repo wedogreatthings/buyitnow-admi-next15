@@ -86,7 +86,7 @@ export const SettingsProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const { data } = await axios.patch(
+      const { data } = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/api/settings/category/toggle-status/${categoryId}`,
         {},
         {
