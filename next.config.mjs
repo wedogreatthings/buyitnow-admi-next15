@@ -78,11 +78,6 @@ const nextConfig = {
         : false,
   },
 
-  // Optimisations Vercel
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'react-toastify'],
-  },
-
   // Headers de sécurité stricts pour admin
   async headers() {
     return [
@@ -221,11 +216,6 @@ const nextConfig = {
         source: '/home',
         destination: '/',
         permanent: true,
-      },
-      {
-        source: '/admin',
-        destination: '/admin',
-        permanent: false,
       },
     ];
   },

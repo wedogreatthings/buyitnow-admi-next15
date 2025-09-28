@@ -90,6 +90,11 @@ export default withAuth(
       );
     }
 
+    // Ajouter une vérification pour éviter les boucles
+    if (pathname === '/admin' && userRole === 'admin') {
+      return NextResponse.next(); // Continuer sans redirection
+    }
+
     // Protection des routes admin - seuls les admins y ont accès
     if (pathname.startsWith('/admin')) {
       if (userRole !== 'admin') {
