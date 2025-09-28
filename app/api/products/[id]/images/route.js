@@ -58,7 +58,7 @@ export async function POST(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     console.log('Params', params);
-    const { id } = params;
+    const { id } = await params;
     const url = new URL(req.url);
     const imageId = url.searchParams.get('imageId');
 
