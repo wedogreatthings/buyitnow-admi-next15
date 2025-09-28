@@ -79,6 +79,9 @@ export const ProductProvider = ({ children }) => {
     try {
       setLoading(true);
 
+      console.log('Product id: ', productId);
+      console.log('Image id: ', imageId);
+
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}/images?imageId=${imageId}`,
         {
@@ -87,6 +90,8 @@ export const ProductProvider = ({ children }) => {
           },
         },
       );
+
+      console.log('data', data);
 
       // Update local state by filtering out the removed image
       setProductImages((prevImages) =>

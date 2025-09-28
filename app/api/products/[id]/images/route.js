@@ -6,7 +6,7 @@ import { cloudinary } from '@/backend/utils/cloudinary';
 // POST - Ajouter des images au produit (depuis Cloudinary Upload Widget)
 export async function POST(req, { params }) {
   try {
-    const { id } = await params;
+    const { id } = params;
     await dbConnect();
 
     let product = await Product.findById(id);
@@ -20,8 +20,6 @@ export async function POST(req, { params }) {
 
     const body = await req.json();
     const { images } = body; // Array d'objets {public_id, url}
-
-    console.log('Images', images);
 
     if (!images || !Array.isArray(images)) {
       return NextResponse.json(
@@ -59,9 +57,13 @@ export async function POST(req, { params }) {
 // DELETE - Supprimer une image du produit
 export async function DELETE(req, { params }) {
   try {
-    const { id } = await params;
+    console.log('Params', params);
+    const { id } = params;
     const url = new URL(req.url);
     const imageId = url.searchParams.get('imageId');
+
+    console.log('URL', url);
+    console.log('image id', imageId);
 
     if (!imageId) {
       return NextResponse.json(
