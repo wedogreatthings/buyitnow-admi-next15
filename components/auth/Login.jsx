@@ -29,6 +29,9 @@ const Login = () => {
       callbackUrl: callBackUrl ? parseCallbackUrl(callBackUrl) : '/admin',
     });
 
+    console.log('Successful login');
+    console.log(data);
+
     if (data?.error) {
       toast.error(data?.error);
     }
