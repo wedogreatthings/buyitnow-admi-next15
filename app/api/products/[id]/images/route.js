@@ -21,6 +21,8 @@ export async function POST(req, { params }) {
     const body = await req.json();
     const { images } = body; // Array d'objets {public_id, url}
 
+    console.log('Images', images);
+
     if (!images || !Array.isArray(images)) {
       return NextResponse.json(
         { message: 'Invalid images data.' },
