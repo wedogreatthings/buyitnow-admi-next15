@@ -122,7 +122,8 @@ export default withAuth(
     }
 
     // Protection CSRF basique pour les mutations
-    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    if (['PUT', 'PATCH'].includes(req.method)) {
+      // Retiré DELETE de la liste
       const contentType = req.headers.get('content-type');
 
       // Vérifier que c'est une requête légitime
@@ -132,7 +133,6 @@ export default withAuth(
           !contentType.includes('multipart/form-data'))
       ) {
         if (!pathname.includes('/api/auth/')) {
-          // Exclure les endpoints d'auth
           return new NextResponse(
             JSON.stringify({
               success: false,
