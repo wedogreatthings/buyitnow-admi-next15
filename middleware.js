@@ -122,7 +122,7 @@ export default withAuth(
     }
 
     // Protection CSRF basique pour les mutations
-    if (['PUT', 'PATCH'].includes(req.method)) {
+    if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
       // Retiré DELETE de la liste
       const contentType = req.headers.get('content-type');
 

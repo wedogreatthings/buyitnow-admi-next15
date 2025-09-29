@@ -56,11 +56,6 @@ export const ProductProvider = ({ children }) => {
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}/images`,
         { images },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
       );
 
       if (data?.data) {
